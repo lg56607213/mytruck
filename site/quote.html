@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>견적요청하기 | Mytruck</title>
+<meta name="description" content="화물차 리스·할부 온라인 견적 신청. 차량과 조건을 선택하시면 영업일 1일 이내에 맞춤 견적서를 이메일로 보내드립니다.">
+
+<!-- EmailJS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ===== RESET & BASE ===== */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 16px; }
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #F5F6F8;
+    color: #1A1A2E;
+    min-height: 100vh;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* ===== LAYOUT ===== */
+  .page-wrap {
+    min-height: calc(100vh - 64px);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 40px 16px 60px;
+  }
+  .qcard {
+    background: #fff;
+    border-radius: 16px;
+    border: 0.5px solid #E2E4EA;
+    width: 100%; max-width: 640px;
+    padding: 36px 32px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+  }
+  @media (max-width: 480px) { .qcard { padding: 26px 18px; } }
+
+  /* ===== HEADER ===== */
+  .form-header { text-align: center; margin-bottom: 28px; }
+  .brand-tag {
+    font-size: 10px; letter-spacing: 0.2em; color: #B07D20;
+    font-weight: 700; text-transform: uppercase; margin-bottom: 10px;
+  }
+  .form-header h1 { font-size: 22px; font-weight: 800; color: #0A1628; line-height: 1.3; margin-bottom: 8px; }
+  .form-header h1 span { color: #C9A84C; }
+  .form-header p { font-size: 13px; color: #888; line-height: 1.6; }
+
+  /* ===== PROGRESS ===== */
+  .progress { display: flex; align-items: flex-start; margin-bottom: 32px; }
+  .ps { flex: 1; text-align: center; position: relative; }
+  .pd {
+    width: 30px; height: 30px; border-radius: 50%;
+    border: 1.5px solid #DADDE5; background: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 6px; font-size: 12px; font-weight: 700; color: #BEC2CC;
+    position: relative; z-index: 2; transition: all 0.25s;
+  }
+  .pd.done { background: #0A1628; border-color: #0A1628; color: #C9A84C; }
+  .pd.act  { background: #C9A84C; border-color: #C9A84C; color: #0A1628; }
+  .pl { position: absolute; top: 14px; left: 50%; right: -50%; height: 1.5px; background: #DADDE5; z-index: 1; }
+  .pl.done { background: #0A1628; }
+  .plb { font-size: 9.5px; color: #BEC2CC; font-weight: 500; letter-spacing: -0.02em; word-break: keep-all; }
+  .plb.act { color: #0A1628; font-weight: 700; }
+  @media (max-width: 400px) {
+    .pd { width: 26px; height: 26px; font-size: 11px; }
+    .pl { top: 12px; }
+    .plb { font-size: 8.5px; letter-spacing: -0.05em; }
+  }
+
+  /* ===== STEP SECTIONS ===== */
+  .step { display: none; }
+  .step.act { display: block; }
+  .sec-eyebrow { font-size: 10px; letter-spacing: 0.14em; color: #B07D20; font-weight: 700; text-transform: uppercase; margin-bottom: 6px; }
+  .sec-title { font-size: 17px; font-weight: 800; color: #0A1628; margin-bottom: 6px; }
+  .sec-desc { font-size: 13px; color: #888; line-height: 1.65; margin-bottom: 24px; }
+  .frow { margin-bottom: 22px; }
+  .flabel { display: block; font-size: 12px; font-weight: 700; color: #444; margin-bottom: 8px; letter-spacing: 0.01em; }
+  .flabel .sub { font-weight: 400; color: #AAA; }
+
+  /* ===== CHIPS ===== */
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    padding: 9px 18px; border-radius: 20px; border: 1px solid #DADDE5;
+    background: #fff; color: #555; font-size: 13px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s; white-space: nowrap;
+  }
+  .chip:hover { border-color: #C9A84C; color: #0A1628; }
+  .chip.sel { background: #0A1628; border-color: #0A1628; color: #C9A84C; font-weight: 700; }
+
+  .sub-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .sub-chip {
+    padding: 8px 14px; border-radius: 8px; border: 1px solid #EAECF0;
+    background: #F8F9FB; color: #555; font-size: 12px; font-weight: 500;
+    cursor: pointer; transition: all 0.15s;
+  }
+  .sub-chip:hover { border-color: #C9A84C; }
+  .sub-chip.sel { background: #0A1628; border-color: #0A1628; color: #C9A84C; font-weight: 700; }
+  .sub-chip .op { font-size: 11px; opacity: .6; margin-left: 5px; }
+
+  /* ===== BIG SELECT CARDS (고객구분 / 상품종류 / 보험 / 정비) ===== */
+  .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+  @media (max-width: 520px) { .card-grid.three { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) { .card-grid { grid-template-columns: 1fr; } }
+  .sel-card {
+    padding: 16px; border-radius: 12px; border: 1px solid #DADDE5;
+    background: #fff; cursor: pointer; transition: all 0.15s;
+  }
+  .sel-card:hover { border-color: #C9A84C; }
+  .sel-card.sel { background: #0A1628; border-color: #0A1628; }
+  .sel-card .ct { font-size: 14px; font-weight: 700; color: #0A1628; transition: color 0.15s; }
+  .sel-card .cs { font-size: 11px; color: #AAA; margin-top: 4px; line-height: 1.5; transition: color 0.15s; }
+  .sel-card.sel .ct { color: #C9A84C; }
+  .sel-card.sel .cs { color: rgba(201,168,76,0.65); }
+  /* 번호판 색상 표시 */
+  .plate {
+    display: inline-block; width: 16px; height: 10px;
+    border-radius: 2px; margin-right: 5px;
+    vertical-align: -1px; border: 1px solid rgba(0,0,0,.25);
+  }
+  .plate.yellow { background: #F2C230; }
+  .plate.white  { background: #FFFFFF; }
+
+  /* ===== PRICE CARD ===== */
+  .price-card {
+    background: #F8F9FB; border-radius: 12px; border: 1px solid #EAECF0;
+    padding: 16px 20px; display: flex; justify-content: space-between;
+    align-items: center; gap: 12px; margin-top: 20px;
+  }
+  .price-main { font-size: 21px; font-weight: 800; color: #0A1628; }
+  .price-main small { font-size: 13px; font-weight: 400; color: #888; margin-left: 3px; }
+  .price-note { font-size: 11px; color: #AAA; text-align: right; line-height: 1.6; white-space: nowrap; }
+  .price-break { font-size: 11px; color: #888; margin-top: 6px; line-height: 1.6; }
+
+  /* ===== CONDITION GRID ===== */
+  .cond-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 420px) { .cond-grid { grid-template-columns: 1fr; } }
+
+  /* ===== 외주옵션 커스텀 항목 ===== */
+  .add-row { display: flex; gap: 8px; }
+  .add-row .input-field { flex: 1; }
+  .btn-add {
+    padding: 0 18px; border-radius: 8px; border: 1px solid #0A1628;
+    background: #0A1628; color: #C9A84C; font-size: 13px; font-weight: 700;
+    cursor: pointer; font-family: inherit; white-space: nowrap;
+  }
+  .btn-add:hover { background: #142038; }
+  .tag-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+  .tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 7px 10px 7px 14px; border-radius: 8px;
+    border: 1px solid #C9A84C; background: #FDFAF1;
+    font-size: 12px; font-weight: 600; color: #0A1628;
+  }
+  .tag button {
+    border: none; background: none; cursor: pointer; font-size: 14px;
+    color: #B07D20; line-height: 1; padding: 0 2px; font-family: inherit;
+  }
+  .empty-note { font-size: 12px; color: #BEC2CC; margin-top: 10px; }
+
+  /* ===== INPUT ===== */
+  .input-field {
+    width: 100%; padding: 12px 14px; border: 1px solid #DADDE5; border-radius: 8px;
+    font-size: 14px; color: #1A1A2E; background: #fff; outline: none;
+    transition: border 0.15s, box-shadow 0.15s; font-family: inherit;
+  }
+  .input-field:focus { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+  .input-field::placeholder { color: #C4C8D0; }
+  .contact-box {
+    background: #F8F9FB; border-radius: 12px; border: 1px solid #EAECF0;
+    padding: 18px 20px; display: flex; flex-direction: column; gap: 14px;
+  }
+  .contact-hint { font-size: 11px; color: #AAA; margin-top: 2px; line-height: 1.7; }
+
+  /* ===== AGREE ===== */
+  .agree-row { display: flex; align-items: flex-start; gap: 9px; margin-top: 16px; cursor: pointer; }
+  .agree-row input { margin-top: 2px; width: 15px; height: 15px; accent-color: #C9A84C; cursor: pointer; }
+  .agree-row span { font-size: 12px; color: #666; line-height: 1.6; }
+
+  /* ===== DIVIDER / SUMMARY ===== */
+  .divider { height: 0.5px; background: #EAECF0; margin: 24px 0; }
+  .summary-card { background: #F8F9FB; border-radius: 12px; border: 1px solid #EAECF0; padding: 16px 20px; margin-bottom: 4px; }
+  .sum-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 7px 0; font-size: 13px; }
+  .sum-row + .sum-row { border-top: 0.5px solid #EAECF0; }
+  .sum-key { color: #888; white-space: nowrap; padding-right: 12px; }
+  .sum-val { color: #0A1628; font-weight: 600; text-align: right; word-break: keep-all; }
+
+  /* ===== BUTTONS ===== */
+  .btn-row { display: flex; gap: 10px; margin-top: 28px; }
+  .btn-prev {
+    padding: 13px 22px; border: 1px solid #DADDE5; border-radius: 10px;
+    background: #fff; color: #666; font-size: 14px; font-weight: 500;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+  }
+  .btn-prev:hover { background: #F5F6F8; }
+  .btn-next {
+    flex: 1; padding: 13px; border-radius: 10px; border: none;
+    background: #C9A84C; color: #0A1628; font-size: 14px; font-weight: 800;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+  }
+  .btn-next:hover { background: #D4B55F; }
+  .btn-submit {
+    width: 100%; margin-top: 10px; padding: 15px; border-radius: 10px; border: none;
+    background: #0A1628; color: #C9A84C; font-size: 15px; font-weight: 800;
+    cursor: pointer; font-family: inherit; transition: background 0.15s;
+  }
+  .btn-submit:hover { background: #142038; }
+  .btn-submit:disabled { background: #AAA; color: #fff; cursor: not-allowed; }
+
+  /* ===== SUCCESS ===== */
+  .success-wrap { display: none; text-align: center; padding: 44px 12px; }
+  .suc-icon {
+    width: 64px; height: 64px; border-radius: 50%; background: #EAF3DE;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 28px;
+  }
+  .success-wrap h2 { font-size: 20px; font-weight: 800; color: #0A1628; margin-bottom: 12px; }
+  .success-wrap p { font-size: 14px; color: #666; line-height: 1.8; }
+  .success-wrap .sub-note { margin-top: 20px; font-size: 12px; color: #AAA; }
+
+  .footer-note { margin-top: 20px; font-size: 11px; color: #BEC2CC; text-align: center; line-height: 1.7; }
+  .company-info {
+    margin: 12px auto;
+    padding: 12px 16px 11px;
+    max-width: 600px;
+    border-top: 0.5px solid #E2E4EA;
+    border-bottom: 0.5px solid #E2E4EA;
+    color: #9AA0AC;
+    line-height: 1.8;
+    word-break: keep-all;
+  }
+  .company-info .cname { font-weight: 700; color: #6B7280; font-size: 12px; }
+  .company-info .sep { margin: 0 5px; color: #D5D8DE; }
+  @media (max-width: 420px) { .company-info .sep.br { display: block; height: 0; overflow: hidden; } }
+
+  /* ===== LOADING / TOAST ===== */
+  .loading-overlay {
+    display: none; position: fixed; inset: 0; background: rgba(255,255,255,0.85);
+    z-index: 999; flex-direction: column; align-items: center; justify-content: center; gap: 14px;
+  }
+  .loading-overlay.show { display: flex; }
+  .spinner {
+    width: 36px; height: 36px; border: 3px solid #EAECF0;
+    border-top-color: #C9A84C; border-radius: 50%; animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .loading-overlay p { font-size: 14px; color: #888; font-weight: 500; }
+  .toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #E24B4A; color: #fff; font-size: 13px; font-weight: 600;
+    padding: 12px 24px; border-radius: 100px; opacity: 0; transition: opacity 0.3s;
+    z-index: 1000; max-width: 90vw; text-align: center; pointer-events: none;
+  }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+  <div class="spinner"></div>
+  <p>견적 신청 중...</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-wrap">
+  <div class="qcard">
+
+    <!-- HEADER -->
+    <div class="form-header">
+      <p class="brand-tag">Mytruck</p>
+      <h1>화물차 <span>맞춤 견적</span></h1>
+      <p>원하는 차량과 조건을 선택하시면<br>맞춤 견적서를 <strong>이메일</strong>로 보내드립니다</p>
+    </div>
+
+    <!-- PROGRESS -->
+    <div class="progress" id="prog">
+      <div class="ps"><div class="pd act" id="pd1">1</div><div class="pl" id="pl1"></div><div class="plb act" id="plb1">내차만들기</div></div>
+      <div class="ps"><div class="pd" id="pd2">2</div><div class="pl" id="pl2"></div><div class="plb" id="plb2">외주옵션</div></div>
+      <div class="ps"><div class="pd" id="pd3">3</div><div class="pl" id="pl3"></div><div class="plb" id="plb3">고객정보</div></div>
+      <div class="ps"><div class="pd" id="pd4">4</div><div class="pl" id="pl4"></div><div class="plb" id="plb4">계약조건</div></div>
+      <div class="ps"><div class="pd" id="pd5">5</div><div class="pl" style="display:none"></div><div class="plb" id="plb5">견적받기</div></div>
+    </div>
+
+    <div id="form-wrap">
+
+      <!-- ===== STEP 1 : 내차만들기 ===== -->
+      <div class="step act" id="s1">
+        <p class="sec-eyebrow">Step 1</p>
+        <p class="sec-title">내 차 만들기</p>
+        <p class="sec-desc">제조사부터 순서대로 선택해 주세요</p>
+
+        <div class="frow">
+          <span class="flabel">제조사</span>
+          <div class="chips" id="brand-grp"></div>
+        </div>
+
+        <div class="frow" id="cat-wrap" style="display:none">
+          <span class="flabel">차종 구분</span>
+          <div class="sub-chips" id="cat-grp"></div>
+        </div>
+
+        <div class="frow" id="model-wrap" style="display:none">
+          <span class="flabel">모델</span>
+          <div class="sub-chips" id="model-grp"></div>
+        </div>
+
+        <div class="frow" id="body-wrap" style="display:none">
+          <span class="flabel">세부 사양</span>
+          <div class="sub-chips" id="body-grp"></div>
+        </div>
+
+        <div class="frow" id="trim-wrap" style="display:none">
+          <span class="flabel">트림</span>
+          <div class="sub-chips" id="trim-grp"></div>
+        </div>
+
+        <div class="frow" id="opt-wrap" style="display:none">
+          <span class="flabel">제조사 옵션 <span class="sub">(복수 선택 가능)</span></span>
+          <div class="sub-chips" id="opt-grp"></div>
+        </div>
+
+        <div id="price-wrap" style="display:none">
+          <div class="price-card">
+            <div>
+              <div style="font-size:11px;color:#888;margin-bottom:4px">예상 차량가 (VAT 포함)</div>
+              <div class="price-main" id="price-disp">-</div>
+              <div class="price-break" id="price-break"></div>
+            </div>
+            <div class="price-note">제조사 가격표 기준<br>실제 견적과 다를 수 있어요</div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-next" onclick="goStep(2)">다음 &rarr; 외주 옵션</button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 2 : 외주옵션 ===== -->
+      <div class="step" id="s2">
+        <p class="sec-eyebrow">Step 2</p>
+        <p class="sec-title">외주 옵션을 선택해 주세요</p>
+        <p class="sec-desc">출고 후 별도로 장착되는 항목입니다.<br>필요 없으시면 선택하지 않고 넘어가셔도 됩니다.</p>
+
+        <div class="frow">
+          <span class="flabel">추천 항목 <span class="sub">(복수 선택 가능)</span></span>
+          <div class="chips" id="ext-grp">
+            <div class="chip" onclick="toggleExt(this,'썬팅')">썬팅</div>
+            <div class="chip" onclick="toggleExt(this,'블랙박스')">블랙박스</div>
+            <div class="chip" onclick="toggleExt(this,'적재함 바닥')">적재함 바닥</div>
+            <div class="chip" onclick="toggleExt(this,'공구함')">공구함</div>
+            <div class="chip" onclick="toggleExt(this,'파워게이트')">파워게이트</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">직접 입력 <span class="sub">(원하는 만큼 추가할 수 있어요)</span></span>
+          <div class="add-row">
+            <input class="input-field" type="text" id="ext-custom"
+                   placeholder="예) 사다리 거치대, LED 작업등"
+                   onkeydown="if(event.key==='Enter'){event.preventDefault();addCustom();}">
+            <button type="button" class="btn-add" onclick="addCustom()">+ 추가</button>
+          </div>
+          <div class="tag-list" id="custom-list"></div>
+          <p class="empty-note" id="custom-empty">아직 추가된 항목이 없습니다.</p>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-prev" onclick="goStep(1)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(3)">다음 &rarr; 고객 정보</button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 3 : 고객정보 ===== -->
+      <div class="step" id="s3">
+        <p class="sec-eyebrow">Step 3</p>
+        <p class="sec-title">고객 정보를 알려주세요</p>
+        <p class="sec-desc">고객 구분에 따라 적용 가능한 상품과 조건이 달라집니다</p>
+
+        <div class="frow">
+          <span class="flabel">고객 구분</span>
+          <div class="card-grid three" id="custtype-grp">
+            <div class="sel-card" onclick="selCard(this,'custtype-grp','custType')">
+              <div class="ct">개인</div>
+              <div class="cs">사업자등록증<br>없음</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'custtype-grp','custType')">
+              <div class="ct">개인사업자</div>
+              <div class="cs">개인 명의<br>사업자등록증 보유</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'custtype-grp','custType')">
+              <div class="ct">법인</div>
+              <div class="cs">법인 명의<br>사업자등록증 보유</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">상품 종류</span>
+          <div class="card-grid three" id="product-grp">
+            <div class="sel-card" onclick="selCard(this,'product-grp','product')">
+              <div class="ct">할부</div>
+              <div class="cs">처음부터 내 명의<br>원금 + 이자 분할 납부</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'product-grp','product')">
+              <div class="ct">운용리스</div>
+              <div class="cs">차량 소유는 리스사<br>비용 전액 경비처리</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'product-grp','product')">
+              <div class="ct">금융리스</div>
+              <div class="cs">자산으로 등록<br>만기 시 소유권 이전</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">운영 방법</span>
+          <div class="card-grid" id="usage-grp">
+            <div class="sel-card" onclick="selCard(this,'usage-grp','usage')">
+              <div class="ct">영업용</div>
+              <div class="cs"><span class="plate yellow"></span>노란색 번호판<br>운송사업용 (영업용 번호판 필요)</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'usage-grp','usage')">
+              <div class="ct">자가용</div>
+              <div class="cs"><span class="plate white"></span>흰색 번호판<br>자가 운반용 (비사업용)</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-prev" onclick="goStep(2)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(4)">다음 &rarr; 계약 조건</button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 4 : 계약조건 ===== -->
+      <div class="step" id="s4">
+        <p class="sec-eyebrow">Step 4</p>
+        <p class="sec-title">계약 조건을 설정해 주세요</p>
+        <p class="sec-desc">원하시는 조건을 버튼으로 선택해 주세요</p>
+
+        <div class="cond-grid">
+          <div class="frow">
+            <span class="flabel">선납금</span>
+            <div class="chips" id="prepay-grp" style="gap:6px">
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">0%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">10%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">20%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">30%</div>
+            </div>
+          </div>
+          <div class="frow">
+            <span class="flabel">보증금</span>
+            <div class="chips" id="deposit-grp" style="gap:6px">
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">0%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">10%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">20%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">30%</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">계약 기간</span>
+          <div class="chips" id="period-grp">
+            <div class="chip" onclick="selOne(this,'period-grp')">12개월</div>
+            <div class="chip" onclick="selOne(this,'period-grp')">24개월</div>
+            <div class="chip" onclick="selOne(this,'period-grp')">36개월</div>
+            <div class="chip" onclick="selOne(this,'period-grp')">48개월</div>
+            <div class="chip" onclick="selOne(this,'period-grp')">60개월</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">연간 주행거리</span>
+          <div class="chips" id="km-grp">
+            <div class="chip" onclick="selOne(this,'km-grp')">2만km</div>
+            <div class="chip" onclick="selOne(this,'km-grp')">3만km</div>
+            <div class="chip" onclick="selOne(this,'km-grp')">5만km</div>
+            <div class="chip" onclick="selOne(this,'km-grp')">7만km</div>
+            <div class="chip" onclick="selOne(this,'km-grp')">제한 없음</div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">보험 가입</span>
+          <div class="card-grid" id="ins-grp">
+            <div class="sel-card" onclick="selCard(this,'ins-grp','insurance')">
+              <div class="ct">직접 가입</div>
+              <div class="cs">보험은 직접 가입합니다</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'ins-grp','insurance')">
+              <div class="ct">가입 요청</div>
+              <div class="cs">보험 가입까지 함께 진행</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="frow">
+          <span class="flabel">정비 서비스</span>
+          <div class="card-grid" id="mnt-grp">
+            <div class="sel-card" onclick="selCard(this,'mnt-grp','maintenance')">
+              <div class="ct">없음</div>
+              <div class="cs">정비는 직접 처리합니다</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'mnt-grp','maintenance')">
+              <div class="ct">있음</div>
+              <div class="cs">소모품 &middot; 정기점검 포함</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-prev" onclick="goStep(3)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(5)">다음 &rarr; 견적받기</button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 5 : 견적받기 ===== -->
+      <div class="step" id="s5">
+        <p class="sec-eyebrow">Step 5</p>
+        <p class="sec-title">견적서를 받아보세요</p>
+        <p class="sec-desc">입력하신 이메일로 맞춤 견적서를 보내드립니다</p>
+
+        <div class="contact-box">
+          <div>
+            <label class="flabel" for="inp-name">이름 / 상호</label>
+            <input class="input-field" type="text" id="inp-name" placeholder="홍길동 또는 (주)한길물류">
+          </div>
+          <div>
+            <label class="flabel" for="inp-email">이메일 주소 <span style="color:#B07D20">*</span></label>
+            <input class="input-field" type="email" id="inp-email" placeholder="example@email.com">
+          </div>
+          <div>
+            <label class="flabel" for="inp-phone">연락처 <span class="sub">(선택)</span></label>
+            <input class="input-field" type="tel" id="inp-phone" placeholder="010-0000-0000"
+                   oninput="fmtPhone(this)" maxlength="13">
+          </div>
+          <p class="contact-hint">
+            입력하신 정보는 견적서 발송 목적으로만 사용됩니다.<br>
+            계약을 원하실 때만 유선 연락이 이루어집니다.
+          </p>
+        </div>
+
+        <label class="agree-row">
+          <input type="checkbox" id="agree">
+          <span>개인정보 수집 &middot; 이용에 동의합니다. <span style="color:#AAA">(견적 발송 목적, 보관 1년)</span></span>
+        </label>
+
+        <div class="divider"></div>
+
+        <p style="font-size:12px;color:#AAA;font-weight:600;margin-bottom:12px">신청 내용 확인</p>
+        <div class="summary-card">
+          <div class="sum-row"><span class="sum-key">고객 구분</span><span class="sum-val" id="sum-custtype">-</span></div>
+          <div class="sum-row"><span class="sum-key">상품 종류</span><span class="sum-val" id="sum-product">-</span></div>
+          <div class="sum-row"><span class="sum-key">운영 방법</span><span class="sum-val" id="sum-usage">-</span></div>
+          <div class="sum-row"><span class="sum-key">차량</span><span class="sum-val" id="sum-car">-</span></div>
+          <div class="sum-row"><span class="sum-key">예상 차량가</span><span class="sum-val" id="sum-price">-</span></div>
+          <div class="sum-row"><span class="sum-key">제조사 옵션</span><span class="sum-val" id="sum-opts">-</span></div>
+          <div class="sum-row"><span class="sum-key">외주 옵션</span><span class="sum-val" id="sum-ext">-</span></div>
+          <div class="sum-row"><span class="sum-key">선납금 / 보증금</span><span class="sum-val" id="sum-cond">-</span></div>
+          <div class="sum-row"><span class="sum-key">계약기간 / 주행거리</span><span class="sum-val" id="sum-term">-</span></div>
+          <div class="sum-row"><span class="sum-key">보험 / 정비</span><span class="sum-val" id="sum-svc">-</span></div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-prev" onclick="goStep(4)">&larr; 이전</button>
+        </div>
+        <button class="btn-submit" id="submit-btn" onclick="submitForm()">견적 신청 완료 &rarr;</button>
+      </div>
+
+    </div><!-- /form-wrap -->
+
+    <!-- SUCCESS -->
+    <div class="success-wrap" id="success">
+      <div class="suc-icon">&#9989;</div>
+      <h2>견적 신청이 완료됐어요!</h2>
+      <p>
+        입력하신 이메일로<br>
+        <strong>영업일 기준 1일 이내</strong>에 맞춤 견적서를 보내드릴게요.<br><br>
+        계약을 원하실 때만 연락 주시면 됩니다.
+      </p>
+      <p class="sub-note">Mytruck &middot; 화물차 리스 &middot; 할부 전문</p>
+      <div class="btn-row center" style="margin-top:26px;justify-content:center">
+        <a class="btn btn-gold" href="products.html">상품 안내 보기</a>
+        <a class="btn btn-line-navy" href="index.html">홈으로</a>
+      </div>
+    </div>
+
+  </div><!-- /qcard -->
+
+  <div class="footer-note">
+    입력하신 정보는 견적 발송 목적 외에 사용되지 않습니다.
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 리스 · 할부 전문</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script src="truck-data.js"></script>
+<script>
+/* ================================================
+   EmailJS 설정 (EmailJS 대시보드 > Email Services / Email Templates)
+   - 템플릿 본문에 <pre>{{quote_detail}}</pre> 하나만 넣으면 전체 내용이 전달됩니다.
+   ================================================ */
+const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";   // 계정 공용 키
+const EMAILJS_SERVICE_ID  = "service_1tfrm9f";     // Mytruck (Gmail)
+const EMAILJS_TEMPLATE_ID = "template_tiosvos";    // Mytruck 견적신청
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+/* ================================================
+   STATE
+   ================================================ */
+const state = {
+  custType: "",        // 개인 / 개인사업자 / 법인
+  product: "",         // 할부 / 운용리스 / 금융리스
+  usage: "",           // 영업용(노란색 번호판) / 자가용(흰색 번호판)
+  brand: "", cat: "", model: "", body: "", trim: "",
+  opts: [],            // [{n, p}]  제조사 옵션
+  ext: [],             // 외주 옵션 (추천 항목)
+  extCustom: [],       // 외주 옵션 (직접 입력)
+  prepay: "", deposit: "", period: "", km: "",
+  insurance: "", maintenance: ""
+};
+
+const won = n => Number(n || 0).toLocaleString("ko-KR");
+
+/* ================================================
+   STEP 1 — 차량 선택 (제조사 → 구분 → 모델 → 세부사양 → 트림)
+   ================================================ */
+function makeChip(text, cls, onClick) {
+  const d = document.createElement("div");
+  d.className = cls;
+  d.textContent = text;
+  d.onclick = () => onClick(d);
+  return d;
+}
+
+function fill(grpId, wrapId, items, cls, onPick) {
+  const grp = document.getElementById(grpId);
+  grp.innerHTML = "";
+  items.forEach(name => {
+    grp.appendChild(makeChip(name, cls, el => {
+      grp.querySelectorAll("." + cls).forEach(c => c.classList.remove("sel"));
+      el.classList.add("sel");
+      onPick(name);
+    }));
+  });
+  if (wrapId) document.getElementById(wrapId).style.display = items.length ? "block" : "none";
+}
+
+function hideFrom(level) {
+  const wraps = ["cat-wrap", "model-wrap", "body-wrap", "trim-wrap", "opt-wrap"];
+  wraps.slice(level).forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("price-wrap").style.display = "none";
+}
+
+(function initBrands() {
+  fill("brand-grp", null, Object.keys(TRUCK_DATA), "chip", brand => {
+    state.brand = brand;
+    state.cat = state.model = state.body = state.trim = "";
+    state.opts = [];
+    hideFrom(0);
+    fill("cat-grp", "cat-wrap", Object.keys(TRUCK_DATA[brand]), "sub-chip", pickCat);
+  });
+})();
+
+function pickCat(cat) {
+  state.cat = cat;
+  state.model = state.body = state.trim = "";
+  state.opts = [];
+  hideFrom(1);
+  fill("model-grp", "model-wrap", Object.keys(TRUCK_DATA[state.brand][cat]), "sub-chip", pickModel);
+}
+
+function pickModel(model) {
+  state.model = model;
+  state.body = state.trim = "";
+  state.opts = [];
+  hideFrom(2);
+  fill("body-grp", "body-wrap", Object.keys(TRUCK_DATA[state.brand][state.cat][model]), "sub-chip", pickBody);
+}
+
+function pickBody(body) {
+  state.body = body;
+  state.trim = "";
+  state.opts = [];
+  hideFrom(3);
+  fill("trim-grp", "trim-wrap", Object.keys(TRUCK_DATA[state.brand][state.cat][state.model][body]), "sub-chip", pickTrim);
+}
+
+function pickTrim(trim) {
+  state.trim = trim;
+  state.opts = [];
+  hideFrom(4);
+
+  const node = curTrim();
+  const grp = document.getElementById("opt-grp");
+  grp.innerHTML = "";
+  if (node.opts && node.opts.length) {
+    node.opts.forEach(o => {
+      const d = document.createElement("div");
+      d.className = "sub-chip";
+      d.innerHTML = o.n + (o.p ? '<span class="op">+' + won(o.p) + '원</span>' : "");
+      d.onclick = () => {
+        d.classList.toggle("sel");
+        if (d.classList.contains("sel")) state.opts.push(o);
+        else state.opts = state.opts.filter(x => x.n !== o.n);
+        updatePrice();
+      };
+      grp.appendChild(d);
+    });
+    document.getElementById("opt-wrap").style.display = "block";
+  }
+  updatePrice();
+}
+
+function curTrim() {
+  try { return TRUCK_DATA[state.brand][state.cat][state.model][state.body][state.trim]; }
+  catch (e) { return null; }
+}
+
+function totalPrice() {
+  const node = curTrim();
+  if (!node) return 0;
+  return (node.price || 0) + state.opts.reduce((s, o) => s + (o.p || 0), 0);
+}
+
+function updatePrice() {
+  const node = curTrim();
+  if (!node) return;
+  const optSum = state.opts.reduce((s, o) => s + (o.p || 0), 0);
+  document.getElementById("price-disp").innerHTML = won(totalPrice()) + '<small>원</small>';
+  document.getElementById("price-break").textContent =
+    optSum ? "기본 " + won(node.price) + "원 + 옵션 " + won(optSum) + "원" : "";
+  document.getElementById("price-wrap").style.display = "block";
+}
+
+/* ================================================
+   STEP 2 — 외주 옵션
+   ================================================ */
+function toggleExt(el, name) {
+  el.classList.toggle("sel");
+  if (el.classList.contains("sel")) state.ext.push(name);
+  else state.ext = state.ext.filter(x => x !== name);
+}
+
+function addCustom() {
+  const inp = document.getElementById("ext-custom");
+  const v = inp.value.trim();
+  if (!v) { showToast("추가할 옵션명을 입력해 주세요"); return; }
+  if (state.extCustom.includes(v)) { showToast("이미 추가된 항목입니다"); return; }
+  state.extCustom.push(v);
+  inp.value = "";
+  inp.focus();
+  renderCustom();
+}
+
+function removeCustom(name) {
+  state.extCustom = state.extCustom.filter(x => x !== name);
+  renderCustom();
+}
+
+function renderCustom() {
+  const list = document.getElementById("custom-list");
+  list.innerHTML = "";
+  state.extCustom.forEach(v => {
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.appendChild(document.createTextNode(v));
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.innerHTML = "&times;";
+    btn.title = "삭제";
+    btn.onclick = () => removeCustom(v);
+    tag.appendChild(btn);
+    list.appendChild(tag);
+  });
+  document.getElementById("custom-empty").style.display = state.extCustom.length ? "none" : "block";
+}
+
+function allExt() {
+  return state.ext.concat(state.extCustom);
+}
+
+/* ================================================
+   STEP 3 / 4 / 5 — 단일 선택
+   ================================================ */
+function selOne(el, grpId) {
+  document.querySelectorAll("#" + grpId + " .chip").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  const key = { "prepay-grp": "prepay", "deposit-grp": "deposit", "period-grp": "period", "km-grp": "km" }[grpId];
+  if (key) state[key] = el.textContent.trim();
+}
+
+function selCard(el, grpId, key) {
+  document.querySelectorAll("#" + grpId + " .sel-card").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  state[key] = el.querySelector(".ct").textContent.trim();
+}
+
+function fmtPhone(el) {
+  let v = el.value.replace(/\D/g, "");
+  if (v.length > 11) v = v.slice(0, 11);
+  if (v.length > 7) v = v.slice(0, 3) + "-" + v.slice(3, 7) + "-" + v.slice(7);
+  else if (v.length > 3) v = v.slice(0, 3) + "-" + v.slice(3);
+  el.value = v;
+}
+
+/* ================================================
+   STEP 이동 + 단계별 검증
+   ================================================ */
+const TOTAL_STEPS = 5;
+
+function checkStep(n) {
+  if (n === 1) {
+    if (!state.trim) return "차량을 트림까지 선택해 주세요";
+  }
+  if (n === 3) {
+    if (!state.custType) return "고객 구분을 선택해 주세요";
+    if (!state.product) return "상품 종류를 선택해 주세요";
+    if (!state.usage) return "운영 방법을 선택해 주세요";
+  }
+  if (n === 4) {
+    if (!state.prepay || !state.deposit) return "선납금과 보증금을 선택해 주세요";
+    if (!state.period || !state.km) return "계약기간과 주행거리를 선택해 주세요";
+    if (!state.insurance) return "보험 가입 방식을 선택해 주세요";
+    if (!state.maintenance) return "정비 서비스 여부를 선택해 주세요";
+  }
+  return null;
+}
+
+function goStep(n) {
+  const cur = currentStep();
+  if (n > cur) {                          // 앞으로 갈 때만 검증
+    for (let i = cur; i < n; i++) {
+      const err = checkStep(i);
+      if (err) { showToast(err); render(i); return; }
+    }
+  }
+  render(n);
+}
+
+function currentStep() {
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    if (document.getElementById("s" + i).classList.contains("act")) return i;
+  }
+  return 1;
+}
+
+function render(n) {
+  document.querySelectorAll(".step").forEach(s => s.classList.remove("act"));
+  document.getElementById("s" + n).classList.add("act");
+  for (let i = 1; i <= TOTAL_STEPS; i++) {
+    const dot = document.getElementById("pd" + i);
+    const lbl = document.getElementById("plb" + i);
+    dot.classList.remove("act", "done");
+    lbl.classList.remove("act");
+    if (i < n) { dot.classList.add("done"); dot.innerHTML = "&#10003;"; }
+    else if (i === n) { dot.classList.add("act"); dot.textContent = i; lbl.classList.add("act"); }
+    else { dot.textContent = i; }
+    const pl = document.getElementById("pl" + i);
+    if (pl) pl.classList.toggle("done", i < n);
+  }
+  if (n === TOTAL_STEPS) buildSummary();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ================================================
+   SUMMARY
+   ================================================ */
+function usageLabel() {
+  if (!state.usage) return "-";
+  return state.usage + (state.usage === "영업용" ? " (노란색 번호판)" : " (흰색 번호판)");
+}
+
+function carLabel() {
+  const parts = [];
+  [state.brand, state.cat, state.model, state.body, state.trim].forEach(v => {
+    if (v && !parts.includes(v)) parts.push(v);   // 구분과 모델명이 겹치는 경우 중복 제거
+  });
+  return parts.join(" ");
+}
+
+function buildSummary() {
+  const ext = allExt();
+  document.getElementById("sum-custtype").textContent = state.custType || "-";
+  document.getElementById("sum-product").textContent = state.product || "-";
+  document.getElementById("sum-usage").textContent   = usageLabel();
+  document.getElementById("sum-car").textContent    = carLabel() || "-";
+  document.getElementById("sum-price").textContent  = totalPrice() ? won(totalPrice()) + "원" : "-";
+  document.getElementById("sum-opts").textContent   = state.opts.length ? state.opts.map(o => o.n).join(", ") : "없음";
+  document.getElementById("sum-ext").textContent    = ext.length ? ext.join(", ") : "없음";
+  document.getElementById("sum-cond").textContent   = "선납 " + (state.prepay || "-") + " / 보증 " + (state.deposit || "-");
+  document.getElementById("sum-term").textContent   = (state.period || "-") + " / " + (state.km || "-");
+  document.getElementById("sum-svc").textContent    = "보험 " + (state.insurance || "-") + " / 정비 " + (state.maintenance || "-");
+}
+
+/* ================================================
+   SUBMIT
+   ================================================ */
+function validateAll() {
+  for (let i = 1; i <= TOTAL_STEPS - 1; i++) {
+    const err = checkStep(i);
+    if (err) { showToast(err); render(i); return false; }
+  }
+  const email = document.getElementById("inp-email").value.trim();
+  if (!email) { showToast("이메일 주소를 입력해 주세요"); return false; }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showToast("올바른 이메일 주소를 입력해 주세요"); return false; }
+  const phone = document.getElementById("inp-phone").value.trim();
+  if (phone && !/^01\d-\d{3,4}-\d{4}$/.test(phone)) { showToast("올바른 휴대폰 번호를 입력해 주세요"); return false; }
+  if (!document.getElementById("agree").checked) { showToast("개인정보 수집·이용에 동의해 주세요"); return false; }
+  return true;
+}
+
+function buildDetail(p) {
+  return [
+    "[화물차 견적 신청]",
+    "신청일시   : " + p.submit_time,
+    "",
+    "── 신청자",
+    "이름/상호  : " + p.customer_name,
+    "이메일     : " + p.customer_email,
+    "연락처     : " + p.customer_phone,
+    "유입경로   : " + p.lead_source,
+    "고객구분   : " + p.customer_type,
+    "상품종류   : " + p.product_type,
+    "운영방법   : " + p.usage_type,
+    "",
+    "── 내차만들기",
+    "차량       : " + p.car_full,
+    "제조사옵션 : " + p.factory_options,
+    "예상차량가 : " + p.estimated_price,
+    "",
+    "── 외주옵션",
+    "선택항목   : " + p.external_options,
+    "직접입력   : " + p.external_custom,
+    "",
+    "── 계약조건",
+    "선납금     : " + p.prepay,
+    "보증금     : " + p.deposit,
+    "계약기간   : " + p.period,
+    "주행거리   : " + p.km,
+    "보험가입   : " + p.insurance,
+    "정비서비스 : " + p.maintenance
+  ].join("\n");
+}
+
+async function submitForm() {
+  if (!validateAll()) return;
+
+  const now = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
+  const params = {
+    submit_time:      now,
+    customer_name:    document.getElementById("inp-name").value.trim() || "-",
+    customer_email:   document.getElementById("inp-email").value.trim(),
+    customer_phone:   document.getElementById("inp-phone").value.trim() || "-",
+    lead_source:      (typeof mtSourceLabel === "function" ? mtSourceLabel() : "-"),
+    customer_type:    state.custType,
+    product_type:     state.product,
+    usage_type:       usageLabel(),
+    brand:            state.brand,
+    category:         state.cat,
+    model:            state.model,
+    body_type:        state.body,
+    trim:             state.trim,
+    car_full:         carLabel(),
+    factory_options:  state.opts.length ? state.opts.map(o => o.n + "(+" + won(o.p) + "원)").join(", ") : "없음",
+    estimated_price:  won(totalPrice()) + "원",
+    external_options: state.ext.length ? state.ext.join(", ") : "없음",
+    external_custom:  state.extCustom.length ? state.extCustom.join(", ") : "없음",
+    prepay:           state.prepay,
+    deposit:          state.deposit,
+    period:           state.period,
+    km:               state.km,
+    insurance:        state.insurance,
+    maintenance:      state.maintenance
+  };
+  params.quote_detail = buildDetail(params);
+  /* 범용 템플릿 호환용 별칭 (기존 템플릿을 재사용할 때) */
+  params.options     = params.factory_options;
+  params.contact     = params.customer_email;
+  params.noti_method = "이메일";
+  params.message     = params.quote_detail;
+
+  const btn = document.getElementById("submit-btn");
+  btn.disabled = true;
+  document.getElementById("loading").classList.add("show");
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    document.getElementById("loading").classList.remove("show");
+    document.getElementById("form-wrap").style.display = "none";
+    document.getElementById("prog").style.display = "none";
+    document.getElementById("success").style.display = "block";
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  } catch (err) {
+    document.getElementById("loading").classList.remove("show");
+    btn.disabled = false;
+    showToast("전송 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
+    console.error("EmailJS error:", err);
+  }
+}
+
+/* ================================================
+   TOAST
+   ================================================ */
+let toastTimer = null;
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
+}
+</script>
+</body>
+</html>

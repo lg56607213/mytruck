@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>문의하기 | Mytruck</title>
+<meta name="description" content="화물차 리스·할부 관련 문의를 남겨주시면 영업일 1일 이내에 답변드립니다.">
+<link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  .ct-grid { display: grid; grid-template-columns: 320px 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 900px) { .ct-grid { grid-template-columns: 1fr; gap: 24px; } }
+
+  .info-card {
+    background: #0A1628; color: #fff; border-radius: 16px;
+    padding: 30px 28px; position: sticky; top: 86px;
+  }
+  @media (max-width: 900px) { .info-card { position: static; } }
+  .info-card h3 { font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+  .info-card > p { font-size: 13.5px; color: #8A97AB; line-height: 1.8; margin-bottom: 24px; word-break: keep-all; }
+  .info-row { padding: 15px 0; border-top: 1px solid rgba(255,255,255,.1); }
+  .info-row .k { font-size: 11.5px; color: #C9A84C; font-weight: 700; letter-spacing: .06em; margin-bottom: 5px; }
+  .info-row .v { font-size: 14.5px; color: #E8ECF2; line-height: 1.7; word-break: keep-all; }
+  .info-row .v small { display: block; font-size: 12.5px; color: #7C899E; margin-top: 3px; }
+  .info-cta { margin-top: 22px; }
+  .info-cta .btn { width: 100%; }
+
+  .form-card { background: #fff; border: 1px solid #E5E8EE; border-radius: 16px; padding: 32px 30px; }
+  @media (max-width: 560px) { .form-card { padding: 24px 20px; } }
+  .form-card > h3 { font-size: 18px; font-weight: 800; color: #0A1628; margin-bottom: 7px; }
+  .form-card > .sub { font-size: 13.5px; color: #6B7280; line-height: 1.75; margin-bottom: 26px; word-break: keep-all; }
+
+  .done { display: none; text-align: center; padding: 56px 16px; }
+  .done.show { display: block; }
+  .done .ic {
+    width: 62px; height: 62px; border-radius: 50%; background: #EAF3DE;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 20px; font-size: 27px;
+  }
+  .done h3 { font-size: 20px; font-weight: 800; color: #0A1628; margin-bottom: 12px; }
+  .done p { font-size: 14.5px; color: #6B7280; line-height: 1.85; }
+</style>
+</head>
+<body>
+
+<div class="loading" id="loading"><div class="spinner"></div><p>문의 접수 중...</p></div>
+<div class="toast" id="toast"></div>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Contact</p>
+    <h1>문의하기</h1>
+    <p>궁금한 점을 남겨주시면 영업일 기준 1일 이내에 답변드립니다</p>
+  </div>
+</div>
+
+<section class="sec tint">
+  <div class="wrap ct-grid">
+
+    <!-- 연락처 -->
+    <aside class="info-card">
+      <h3>연락처 안내</h3>
+      <p>차량 견적이 목적이시라면 견적요청을 이용하시는 편이 더 빠릅니다.</p>
+
+      <div class="info-row">
+        <div class="k">TEL</div>
+        <div class="v"><a href="tel:0269250516" style="color:inherit">02-6925-0516</a><small>평일 09:00 ~ 18:00</small></div>
+      </div>
+      <div class="info-row">
+        <div class="k">EMAIL</div>
+        <div class="v"><a href="mailto:jdgp@jdgp.co.kr" style="color:inherit">jdgp@jdgp.co.kr</a><small>24시간 접수</small></div>
+      </div>
+      <div class="info-row">
+        <div class="k">ADDRESS</div>
+        <div class="v">서울특별시 영등포구<br>여의대방로 379, 605호<small>(주)제이디엔드</small></div>
+      </div>
+      <div class="info-row">
+        <div class="k">HOLIDAY</div>
+        <div class="v">토 · 일 · 공휴일 휴무</div>
+      </div>
+
+      <div class="info-cta">
+        <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </div>
+    </aside>
+
+    <!-- 문의 폼 -->
+    <div class="form-card">
+      <div id="formWrap">
+        <h3>문의 남기기</h3>
+        <p class="sub">아래 내용을 남겨주시면 담당자가 확인 후 회신드립니다.<br>입력하신 정보는 문의 응대 목적 외에는 사용되지 않습니다.</p>
+
+        <div class="field">
+          <label for="c-type">문의 유형 <span class="req">*</span></label>
+          <select class="sel" id="c-type">
+            <option value="">선택해 주세요</option>
+            <option>상품 · 조건 문의</option>
+            <option>차량 재고 · 출고 일정</option>
+            <option>정비 서비스 문의</option>
+            <option>계약 · 서류 문의</option>
+            <option>기존 계약 관련</option>
+            <option>제휴 · 기타</option>
+          </select>
+        </div>
+
+        <div class="f2">
+          <div class="field">
+            <label for="c-name">이름 / 상호 <span class="req">*</span></label>
+            <input class="inp" type="text" id="c-name" placeholder="홍길동 또는 (주)한길물류">
+          </div>
+          <div class="field">
+            <label for="c-phone">연락처 <span class="req">*</span></label>
+            <input class="inp" type="tel" id="c-phone" placeholder="010-0000-0000" maxlength="13" oninput="fmtPhone(this)">
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="c-email">이메일</label>
+          <input class="inp" type="email" id="c-email" placeholder="example@email.com">
+          <p class="hint">이메일로 답변받기를 원하시면 입력해 주세요. 비워두시면 유선으로 연락드립니다.</p>
+        </div>
+
+        <div class="field">
+          <label for="c-msg">문의 내용 <span class="req">*</span></label>
+          <textarea class="txt" id="c-msg" placeholder="예) 포터2 초장축 카고를 36개월 운용리스로 알아보고 있습니다. 개인사업자이고 영업용 번호판으로 진행하려고 하는데 월 납입금이 어느 정도 나올까요?"></textarea>
+        </div>
+
+        <label class="agree">
+          <input type="checkbox" id="c-agree">
+          <span>개인정보 수집 · 이용에 동의합니다. <span style="color:#9AA0AC">(문의 응대 목적, 보관 1년)</span></span>
+        </label>
+
+        <button type="button" class="btn btn-navy" id="c-submit" style="width:100%">문의 남기기</button>
+      </div>
+
+      <div class="done" id="done">
+        <div class="ic">✅</div>
+        <h3>문의가 접수되었습니다</h3>
+        <p>
+          남겨주신 연락처로<br>
+          <strong>영업일 기준 1일 이내</strong>에 답변드리겠습니다.<br><br>
+          감사합니다.
+        </p>
+        <div class="btn-row center" style="margin-top:26px">
+          <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적도 요청하기</a>
+          <a class="btn btn-line-navy" href="index.html">홈으로</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 리스 · 할부 전문</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script>
+/* ================================================
+   EmailJS — 견적요청 폼과 같은 서비스/템플릿을 사용합니다.
+   (템플릿 본문의 <pre>{{quote_detail}}</pre> 로 내용이 전달됩니다)
+   ================================================ */
+const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";
+const EMAILJS_SERVICE_ID  = "service_1tfrm9f";
+const EMAILJS_TEMPLATE_ID = "template_tiosvos";
+
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
+function v(id) { return document.getElementById(id).value.trim(); }
+
+function leadSource() {
+  return typeof mtSourceLabel === "function" ? mtSourceLabel() : "-";
+}
+
+function buildInquiry() {
+  return [
+    "[문의하기]",
+    "접수일시   : " + new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+    "",
+    "── 문의자",
+    "문의유형   : " + v('c-type'),
+    "이름/상호  : " + v('c-name'),
+    "연락처     : " + v('c-phone'),
+    "이메일     : " + (v('c-email') || "-"),
+    "유입경로   : " + leadSource(),
+    "",
+    "── 문의 내용",
+    v('c-msg')
+  ].join("\n");
+}
+
+document.getElementById('c-submit').addEventListener('click', async function () {
+  if (!v('c-type'))  { showToast("문의 유형을 선택해 주세요"); return; }
+  if (!v('c-name'))  { showToast("이름 또는 상호를 입력해 주세요"); return; }
+  if (!v('c-phone')) { showToast("연락처를 입력해 주세요"); return; }
+  if (!/^01\d-\d{3,4}-\d{4}$/.test(v('c-phone'))) { showToast("올바른 휴대폰 번호를 입력해 주세요"); return; }
+  if (v('c-email') && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v('c-email'))) { showToast("올바른 이메일 주소를 입력해 주세요"); return; }
+  if (v('c-msg').length < 5) { showToast("문의 내용을 입력해 주세요"); return; }
+  if (!document.getElementById('c-agree').checked) { showToast("개인정보 수집·이용에 동의해 주세요"); return; }
+
+  const detail = buildInquiry();
+  const params = {
+    submit_time:    new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
+    customer_name:  v('c-name'),
+    customer_email: v('c-email') || "-",
+    customer_phone: v('c-phone'),
+    car_full:       "문의하기 (" + v('c-type') + ")",
+    lead_source:    leadSource(),
+    quote_detail:   detail,
+    message:        detail,
+    contact:        v('c-email') || v('c-phone')
+  };
+
+  const btn = this;
+  btn.disabled = true;
+  document.getElementById('loading').classList.add('show');
+
+  try {
+    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('formWrap').style.display = 'none';
+    document.getElementById('done').classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (err) {
+    document.getElementById('loading').classList.remove('show');
+    btn.disabled = false;
+    showToast("전송 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
+    console.error("EmailJS error:", err);
+  }
+});
+</script>
+</body>
+</html>

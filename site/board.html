@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>게시판 | Mytruck</title>
+<meta name="description" content="Mytruck 공지사항과 상품안내, 이벤트 소식을 확인하세요.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ===== 툴바 ===== */
+  .board-top {
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 14px; flex-wrap: wrap; margin-bottom: 20px;
+  }
+  .cats { display: flex; gap: 7px; flex-wrap: wrap; }
+  .cats button {
+    padding: 9px 17px; border-radius: 100px; border: 1px solid #E5E8EE;
+    background: #fff; color: #6B7280; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: .15s;
+  }
+  .cats button:hover { border-color: #C9A84C; color: #0A1628; }
+  .cats button.on { background: #0A1628; border-color: #0A1628; color: #C9A84C; }
+  .search { position: relative; }
+  .search input {
+    width: 230px; padding: 10px 14px; border: 1px solid #D6DAE2; border-radius: 100px;
+    font-size: 13.5px; font-family: inherit; outline: none; transition: .15s;
+  }
+  .search input:focus { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
+  @media (max-width: 560px) { .search, .search input { width: 100%; } }
+
+  /* ===== 목록 ===== */
+  .list { border-top: 2px solid #0A1628; }
+  .row {
+    display: grid; grid-template-columns: 62px 92px 1fr 104px;
+    align-items: center; gap: 14px;
+    padding: 17px 12px; border-bottom: 1px solid #E9ECF1;
+    cursor: pointer; transition: background .13s;
+  }
+  .row:hover { background: #FAFBFC; }
+  .row .no { font-size: 13px; color: #9AA0AC; text-align: center; }
+  .row .no.fix {
+    background: #C9A84C; color: #0A1628; border-radius: 5px;
+    font-size: 11px; font-weight: 800; padding: 3px 0;
+  }
+  .row .cat {
+    font-size: 11.5px; font-weight: 800; text-align: center;
+    padding: 4px 0; border-radius: 5px;
+  }
+  .cat-공지 { background: #E7EDF7; color: #2C4C86; }
+  .cat-상품안내 { background: #F1EAD6; color: #8A6714; }
+  .cat-이벤트 { background: #E6F2EA; color: #1F7A4D; }
+  .row .ti {
+    font-size: 15px; font-weight: 700; color: #1F2937;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .row:hover .ti { color: #B07D20; }
+  .row .dt { font-size: 12.5px; color: #9AA0AC; text-align: right; }
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 78px 1fr; gap: 5px 12px; padding: 15px 8px; }
+    .row .no { display: none; }
+    .row .ti { grid-column: 1 / -1; white-space: normal; line-height: 1.55; font-size: 14.5px; }
+    .row .dt { grid-column: 2; text-align: left; }
+  }
+  .empty { padding: 64px 16px; text-align: center; color: #9AA0AC; font-size: 14.5px; }
+
+  /* ===== 상세 ===== */
+  .view { display: none; }
+  .view.show { display: block; }
+  .view-hd { border-top: 2px solid #0A1628; border-bottom: 1px solid #E9ECF1; padding: 26px 4px 22px; }
+  .view-hd .meta { display: flex; align-items: center; gap: 10px; margin-bottom: 13px; flex-wrap: wrap; }
+  .view-hd .cat { font-size: 11.5px; font-weight: 800; padding: 5px 11px; border-radius: 5px; }
+  .view-hd .dt { font-size: 13px; color: #9AA0AC; }
+  .view-hd h2 { font-size: 23px; font-weight: 800; color: #0A1628; line-height: 1.45; word-break: keep-all; }
+  @media (max-width: 600px) { .view-hd h2 { font-size: 19px; } }
+  .view-body {
+    padding: 30px 4px 36px; font-size: 15px; color: #374151;
+    line-height: 1.95; word-break: keep-all; border-bottom: 1px solid #E9ECF1;
+  }
+  .view-nav { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .nav-btn {
+    padding: 11px 18px; border: 1px solid #E5E8EE; border-radius: 9px;
+    background: #fff; color: #4B5563; font-size: 13.5px; font-weight: 700;
+    cursor: pointer; font-family: inherit; transition: .15s;
+  }
+  .nav-btn:hover:not(:disabled) { border-color: #C9A84C; color: #0A1628; }
+  .nav-btn:disabled { color: #C4C8D0; cursor: default; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Board</p>
+    <h1>게시판</h1>
+    <p>공지사항과 상품 안내, 이벤트 소식을 전해드립니다</p>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap narrow">
+
+    <!-- 목록 -->
+    <div id="listView">
+      <div class="board-top">
+        <div class="cats" id="cats">
+          <button type="button" class="on" data-cat="전체">전체</button>
+          <button type="button" data-cat="공지">공지</button>
+          <button type="button" data-cat="상품안내">상품안내</button>
+          <button type="button" data-cat="이벤트">이벤트</button>
+        </div>
+        <div class="search">
+          <input type="search" id="q" placeholder="제목으로 검색" autocomplete="off">
+        </div>
+      </div>
+      <div class="list" id="list"></div>
+    </div>
+
+    <!-- 상세 -->
+    <div class="view" id="postView">
+      <div class="view-hd">
+        <div class="meta">
+          <span class="cat" id="vCat"></span>
+          <span class="dt" id="vDate"></span>
+        </div>
+        <h2 id="vTitle"></h2>
+      </div>
+      <div class="view-body" id="vBody"></div>
+      <div class="view-nav">
+        <button type="button" class="nav-btn" id="vPrev">← 이전 글</button>
+        <button type="button" class="nav-btn" id="vList">목록으로</button>
+        <button type="button" class="nav-btn" id="vNext">다음 글 →</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>궁금한 점이 있으신가요</h2>
+    <p>게시판에 없는 내용은 언제든 문의해 주세요.</p>
+    <div class="btn-row center">
+      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      <a class="btn btn-line" href="contact.html">문의하기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 리스 · 할부 전문</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<script src="assets/posts.js"></script>
+<script>
+(function () {
+  var listEl  = document.getElementById('list');
+  var listView = document.getElementById('listView');
+  var postView = document.getElementById('postView');
+  var qEl = document.getElementById('q');
+  var cat = '전체';
+
+  /* 정렬: 고정글 먼저, 그다음 작성일 최신순 */
+  var ALL = POSTS.slice().sort(function (a, b) {
+    if (!!b.top - !!a.top) return !!b.top - !!a.top;
+    return (b.date || '').localeCompare(a.date || '');
+  });
+
+  function filtered() {
+    var kw = (qEl.value || '').trim().toLowerCase();
+    return ALL.filter(function (p) {
+      if (cat !== '전체' && p.cat !== cat) return false;
+      if (kw && p.title.toLowerCase().indexOf(kw) === -1) return false;
+      return true;
+    });
+  }
+
+  function renderList() {
+    var rows = filtered();
+    listEl.innerHTML = '';
+    if (!rows.length) {
+      var e = document.createElement('div');
+      e.className = 'empty';
+      e.textContent = '해당하는 글이 없습니다.';
+      listEl.appendChild(e);
+      return;
+    }
+    rows.forEach(function (p) {
+      var r = document.createElement('div');
+      r.className = 'row';
+      r.setAttribute('role', 'link');
+      r.setAttribute('tabindex', '0');
+
+      var no = document.createElement('div');
+      no.className = 'no' + (p.top ? ' fix' : '');
+      no.textContent = p.top ? '공지' : p.id;
+
+      var c = document.createElement('div');
+      c.className = 'cat cat-' + p.cat;
+      c.textContent = p.cat;
+
+      var t = document.createElement('div');
+      t.className = 'ti';
+      t.textContent = p.title;
+
+      var d = document.createElement('div');
+      d.className = 'dt';
+      d.textContent = (p.date || '').replace(/-/g, '.');
+
+      r.appendChild(no); r.appendChild(c); r.appendChild(t); r.appendChild(d);
+      r.addEventListener('click', function () { location.hash = 'post-' + p.id; });
+      r.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); location.hash = 'post-' + p.id; }
+      });
+      listEl.appendChild(r);
+    });
+  }
+
+  function openPost(id) {
+    var i = ALL.findIndex(function (p) { return String(p.id) === String(id); });
+    if (i === -1) { showList(); return; }
+    var p = ALL[i];
+
+    var vc = document.getElementById('vCat');
+    vc.textContent = p.cat;
+    vc.className = 'cat cat-' + p.cat;
+    document.getElementById('vDate').textContent = (p.date || '').replace(/-/g, '.');
+    document.getElementById('vTitle').textContent = p.title;
+
+    /* 줄바꿈만 살려서 안전하게 출력 */
+    var body = document.getElementById('vBody');
+    body.innerHTML = '';
+    String(p.body || '').split('\n').forEach(function (line, idx) {
+      if (idx) body.appendChild(document.createElement('br'));
+      body.appendChild(document.createTextNode(line));
+    });
+
+    var prev = ALL[i - 1], next = ALL[i + 1];
+    var pb = document.getElementById('vPrev'), nb = document.getElementById('vNext');
+    pb.disabled = !prev; nb.disabled = !next;
+    pb.onclick = function () { if (prev) location.hash = 'post-' + prev.id; };
+    nb.onclick = function () { if (next) location.hash = 'post-' + next.id; };
+
+    listView.style.display = 'none';
+    postView.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function showList() {
+    postView.classList.remove('show');
+    listView.style.display = 'block';
+  }
+
+  function route() {
+    var m = (location.hash || '').match(/^#post-(.+)$/);
+    if (m) openPost(m[1]);
+    else { showList(); renderList(); }
+  }
+
+  document.getElementById('vList').onclick = function () {
+    if (location.hash) location.hash = '';
+    else route();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  document.getElementById('cats').addEventListener('click', function (e) {
+    if (e.target.tagName !== 'BUTTON') return;
+    this.querySelectorAll('button').forEach(function (b) { b.classList.remove('on'); });
+    e.target.classList.add('on');
+    cat = e.target.dataset.cat;
+    renderList();
+  });
+
+  qEl.addEventListener('input', renderList);
+  window.addEventListener('hashchange', route);
+
+  renderList();
+  route();
+})();
+</script>
+</body>
+</html>

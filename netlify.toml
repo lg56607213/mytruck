@@ -1,0 +1,10 @@
+# Netlify 설정
+# 이 저장소를 Netlify에 연결하면 site 폴더가 그대로 배포됩니다.
+# (git push 할 때마다 자동 배포 — 드래그앤드롭이 더 이상 필요 없습니다)
+#
+# 연결 방법: Netlify → Project configuration → Build & deploy → Link repository
+# 빌드 과정이 없는 정적 사이트라 build 명령은 비워 둡니다.
+
+[build]
+  publish = "site"
+  command = ""

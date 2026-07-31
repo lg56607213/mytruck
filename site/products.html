@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>상품안내 | Mytruck</title>
+<meta name="description" content="화물차 운용리스·금융리스·할부의 차이와 정비포함 리스 상품(실속형·일반형·고급형)을 비교해 안내합니다. 선납금, 보증금, 계약기간, 주행거리 조건까지 한눈에.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .anchor-nav {
+    position: sticky; top: 64px; z-index: 50;
+    background: #fff; border-bottom: 1px solid #E5E8EE;
+  }
+  .anchor-nav .in { display: flex; gap: 4px; overflow-x: auto; padding: 11px 0; }
+  .anchor-nav a {
+    padding: 8px 15px; border-radius: 100px; white-space: nowrap;
+    font-size: 13.5px; font-weight: 700; color: #6B7280;
+    border: 1px solid #E5E8EE; transition: .15s;
+  }
+  .anchor-nav a:hover { border-color: #C9A84C; color: #0A1628; }
+
+  .pblock { scroll-margin-top: 130px; }
+  .pblock + .pblock { margin-top: 60px; padding-top: 58px; border-top: 1px solid #E5E8EE; }
+  .pblock-head { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; flex-wrap: wrap; }
+  .pblock-head .badge {
+    padding: 6px 13px; border-radius: 100px; background: #0A1628; color: #C9A84C;
+    font-size: 12px; font-weight: 800;
+  }
+  .pblock-head h2 { font-size: 26px; font-weight: 800; color: #0A1628; letter-spacing: -.02em; }
+  .pblock > .desc {
+    font-size: 15px; color: #4B5563; line-height: 1.95;
+    margin-bottom: 26px; max-width: 780px; word-break: keep-all;
+  }
+  @media (max-width: 600px) { .pblock-head h2 { font-size: 21px; } }
+
+  .pcols { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+  @media (max-width: 760px) { .pcols { grid-template-columns: 1fr; } }
+  .pbox { border: 1px solid #E5E8EE; border-radius: 14px; padding: 24px 22px; background: #fff; }
+  .pbox.good { border-color: #DCC894; background: #FEFCF6; }
+  .pbox h4 { font-size: 15px; font-weight: 800; color: #0A1628; margin-bottom: 14px; display: flex; align-items: center; gap: 7px; }
+  .pbox h4 .m { font-size: 15px; }
+
+  .note {
+    margin-top: 22px; padding: 17px 20px; border-radius: 11px;
+    background: #F5F6F8; border-left: 3px solid #C9A84C;
+    font-size: 13.5px; color: #4B5563; line-height: 1.85; word-break: keep-all;
+  }
+  .note b { color: #0A1628; }
+
+  .plan-hd { font-weight: 800 !important; color: #0A1628 !important; }
+  table.t td.y { color: #1F7A4D; font-weight: 700; }
+  table.t td.n { color: #C2C7D0; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Products</p>
+    <h1>상품안내</h1>
+    <p>운용리스 · 금융리스 · 할부, 그리고 정비포함 상품까지<br>무엇이 어떻게 다른지 정리했습니다</p>
+  </div>
+</div>
+
+<nav class="anchor-nav">
+  <div class="wrap in">
+    <a href="#compare">한눈에 비교</a>
+    <a href="#operating">운용리스</a>
+    <a href="#finance">금융리스</a>
+    <a href="#installment">할부</a>
+    <a href="#maintenance">정비포함 상품</a>
+    <a href="#terms">계약 조건</a>
+  </div>
+</nav>
+
+<!-- ===== 비교표 ===== -->
+<section class="sec" id="compare" style="scroll-margin-top:130px">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Compare</p>
+      <h2>한눈에 비교하기</h2>
+      <p>가장 큰 차이는 <b>차량 명의를 누가 갖는가</b>와 <b>비용을 어떻게 처리하는가</b>입니다.</p>
+    </div>
+    <div class="tbl-scroll">
+      <table class="t">
+        <thead>
+          <tr><th style="width:132px">구분</th><th>운용리스</th><th>금융리스</th><th>할부</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>차량 명의</th><td class="c">리스사</td><td class="c">리스사<br><span style="font-size:12.5px;color:#8A94A6">(만기 시 이전)</span></td><td class="c hl">고객 본인</td></tr>
+          <tr><th>회계 처리</th><td>리스료 전액 비용 처리</td><td>자산 계상 후<br>감가상각 + 이자비용</td><td>자산 계상 후<br>감가상각 + 이자비용</td></tr>
+          <tr><th>부채비율 영향</th><td class="c y">없음</td><td class="c">있음</td><td class="c">있음</td></tr>
+          <tr><th>초기 부담</th><td>선납금 · 보증금 조정 가능</td><td>선납금 조정 가능</td><td>선수금 조정 가능</td></tr>
+          <tr><th>만기 처리</th><td class="hl">반납 · 연장 · 인수 선택</td><td>소유권 이전</td><td>완납 시 종료</td></tr>
+          <tr><th>중도 해지</th><td>위약금 발생</td><td>위약금 발생</td><td>잔액 일시 상환</td></tr>
+          <tr><th>정비포함 선택</th><td class="c y">가능</td><td class="c y">가능</td><td class="c n">해당 없음</td></tr>
+          <tr><th>이런 분께</th><td>비용 처리를 최대한 늘리고<br>차량을 주기적으로 교체하실 분</td><td>차를 끝까지 쓰고<br>소유하실 계획인 분</td><td>절차를 단순하게<br>가져가고 싶은 분</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="note">
+      <b>운영 방법에 따라서도 달라집니다.</b>
+      영업용(노란색 번호판)은 운수사업 허가와 번호판이 필요하고, 자가용(흰색 번호판)은 자기 물건 운반에만 사용할 수 있습니다.
+      번호판 종류에 따라 취득세와 보험료, 심사 기준이 달라지므로 견적 요청 시 함께 선택해 주세요.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 상품별 상세 ===== -->
+<section class="sec tint">
+  <div class="wrap">
+
+    <!-- 운용리스 -->
+    <div class="pblock" id="operating">
+      <div class="pblock-head">
+        <span class="badge">01</span>
+        <h2>운용리스</h2>
+      </div>
+      <p class="desc">
+        차량 소유권은 리스사가 갖고, 고객은 사용료 개념의 리스료를 매달 납입합니다.
+        차량이 재무제표상 자산으로 잡히지 않아 부채비율에 영향을 주지 않고,
+        납입한 리스료를 전액 비용으로 처리할 수 있어 사업자에게 가장 많이 선택되는 방식입니다.
+      </p>
+      <div class="pcols">
+        <div class="pbox good">
+          <h4><span class="m">◎</span> 이런 점이 좋습니다</h4>
+          <ul class="dot">
+            <li><b>리스료 전액 비용 처리</b> — 별도 감가상각 계산이 필요 없습니다</li>
+            <li><b>부채비율에 영향 없음</b> — 다른 금융 한도에 부담을 덜 줍니다</li>
+            <li><b>정비포함 선택 가능</b> — 정비비를 고정비로 바꿀 수 있습니다</li>
+            <li><b>만기 선택권</b> — 반납 · 연장 · 인수 중 그때 상황에 맞춰 결정</li>
+          </ul>
+        </div>
+        <div class="pbox">
+          <h4><span class="m">△</span> 함께 확인하실 점</h4>
+          <ul class="dot">
+            <li>약정 주행거리를 초과하면 정산 비용이 발생합니다</li>
+            <li>반납 시 차량 상태에 따라 원상복구 비용이 나올 수 있습니다</li>
+            <li>중도 해지 시 위약금이 발생합니다</li>
+            <li>차량이 본인 자산으로 남지 않습니다</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 금융리스 -->
+    <div class="pblock" id="finance">
+      <div class="pblock-head">
+        <span class="badge">02</span>
+        <h2>금융리스</h2>
+      </div>
+      <p class="desc">
+        형식은 리스지만 실질은 할부에 가깝습니다. 차량을 자산으로 등록해 감가상각비와 이자비용을 처리하고,
+        계약이 끝나면 소유권이 고객에게 넘어옵니다. 차를 오래 쓰실 계획이고 결국 소유하실 분께 맞습니다.
+      </p>
+      <div class="pcols">
+        <div class="pbox good">
+          <h4><span class="m">◎</span> 이런 점이 좋습니다</h4>
+          <ul class="dot">
+            <li><b>만기 시 소유권 이전</b> — 끝까지 타고 자산으로 남깁니다</li>
+            <li><b>감가상각 + 이자비용</b> 처리로 절세 효과를 가져갑니다</li>
+            <li>주행거리 제한 부담이 운용리스보다 적습니다</li>
+            <li>차량 개조 · 특장 작업에 상대적으로 자유롭습니다</li>
+          </ul>
+        </div>
+        <div class="pbox">
+          <h4><span class="m">△</span> 함께 확인하실 점</h4>
+          <ul class="dot">
+            <li>자산과 부채로 잡혀 부채비율에 영향을 줍니다</li>
+            <li>감가상각 등 회계 처리를 직접 관리해야 합니다</li>
+            <li>중도 해지 시 위약금이 발생합니다</li>
+            <li>차량 처분 책임이 만기 후 본인에게 있습니다</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 할부 -->
+    <div class="pblock" id="installment">
+      <div class="pblock-head">
+        <span class="badge">03</span>
+        <h2>할부</h2>
+      </div>
+      <p class="desc">
+        출고 시점부터 차량이 본인 명의가 됩니다. 차량 가격에서 선수금을 뺀 금액을
+        원금과 이자로 나누어 납입하고, 완납하면 그것으로 끝입니다.
+        구조가 가장 단순해서 회계 처리를 복잡하게 가져가고 싶지 않은 분께 맞습니다.
+      </p>
+      <div class="pcols">
+        <div class="pbox good">
+          <h4><span class="m">◎</span> 이런 점이 좋습니다</h4>
+          <ul class="dot">
+            <li><b>처음부터 본인 명의</b> — 명의 이전 절차가 없습니다</li>
+            <li>주행거리 제한이나 반납 조건이 없습니다</li>
+            <li>완납 후 별도 정산 절차가 없어 단순합니다</li>
+            <li>차량 매각이 자유롭습니다</li>
+          </ul>
+        </div>
+        <div class="pbox">
+          <h4><span class="m">△</span> 함께 확인하실 점</h4>
+          <ul class="dot">
+            <li>정비포함 상품을 붙일 수 없습니다</li>
+            <li>취득세 등 초기 비용을 본인이 부담합니다</li>
+            <li>자산과 부채로 잡혀 부채비율에 영향을 줍니다</li>
+            <li>차량 관리와 처분을 전부 본인이 책임집니다</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 정비포함 상품 ===== -->
+<section class="sec" id="maintenance" style="scroll-margin-top:130px">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Maintenance</p>
+      <h2>정비포함 리스 상품</h2>
+      <p>화물차는 주행거리가 길어 소모품 교체 주기가 빠릅니다.<br>정비 항목을 월 납입금에 포함하면 예측하기 어려운 지출을 고정비로 바꿀 수 있습니다.</p>
+    </div>
+
+    <div class="tbl-scroll">
+      <table class="t">
+        <thead>
+          <tr>
+            <th style="width:190px">정비 항목</th>
+            <th>불포함형</th>
+            <th>실속형</th>
+            <th>일반형</th>
+            <th>고급형</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th>법정 정기점검</th><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>엔진오일 · 오일필터</th><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>에어필터 · 연료필터</th><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>브레이크 패드 · 라이닝</th><td class="c n">—</td><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>배터리 · 와이퍼</th><td class="c n">—</td><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>부동액 · 각종 오일류</th><td class="c n">—</td><td class="c n">—</td><td class="c y">●</td><td class="c y">●</td></tr>
+          <tr><th>타이어 교체</th><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">●</td></tr>
+          <tr><th>주요 소모성 부품</th><td class="c n">—</td><td class="c n">—</td><td class="c n">—</td><td class="c y">●</td></tr>
+          <tr>
+            <th class="plan-hd">이런 분께</th>
+            <td>거래 정비소가 있고<br>납입금을 최대한 낮추실 분</td>
+            <td>기본 점검만 맡기고<br>나머지는 직접 관리하실 분</td>
+            <td>정비소 방문 없이<br>대부분 처리하고 싶으신 분</td>
+            <td>장거리 · 고빈도 운행으로<br>타이어 소모가 빠른 분</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <b>정비 항목의 세부 범위와 한도는 금융사 · 상품별로 다릅니다.</b>
+      위 표는 일반적인 구성 기준이며, 실제 포함 항목과 연간 한도, 지정 정비망은
+      견적 시 선택하신 상품 기준으로 정확하게 안내해 드립니다.
+      사고 수리와 소모성이 아닌 고장 수리는 정비포함 범위에 들어가지 않으며 보험으로 처리합니다.
+    </div>
+
+    <div class="btn-row center" style="margin-top:32px">
+      <a class="btn btn-navy" href="quote.html" target="_blank" rel="noopener">정비 포함 조건으로 견적받기</a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 계약 조건 ===== -->
+<section class="sec tint" id="terms" style="scroll-margin-top:130px">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Terms</p>
+      <h2>계약 조건 안내</h2>
+      <p>아래 항목을 어떻게 조합하느냐에 따라 월 납입금이 크게 달라집니다.</p>
+    </div>
+
+    <div class="tbl-scroll">
+      <table class="t">
+        <tbody>
+          <tr>
+            <th>선납금</th>
+            <td>
+              계약 시작 시 미리 납입하는 금액으로 <b>0% · 10% · 20% · 30%</b> 중 선택합니다.
+              많이 낼수록 월 납입금이 내려가지만 초기 현금 부담이 커집니다.
+            </td>
+          </tr>
+          <tr>
+            <th>보증금</th>
+            <td>
+              계약 이행을 담보하는 금액으로 <b>0% · 10% · 20% · 30%</b> 중 선택합니다.
+              만기에 정산 후 돌려받는 금액이며, 신용도에 따라 요구 비율이 달라질 수 있습니다.
+            </td>
+          </tr>
+          <tr>
+            <th>계약 기간</th>
+            <td>
+              <b>12 · 24 · 36 · 48 · 60개월</b> 중 선택합니다.
+              길게 잡으면 월 납입금이 내려가지만 총 이자 부담은 늘어납니다.
+              화물차는 <b>36~60개월</b>을 가장 많이 선택합니다.
+            </td>
+          </tr>
+          <tr>
+            <th>연간 주행거리</th>
+            <td>
+              <b>2만 · 3만 · 5만 · 7만km · 제한 없음</b> 중 선택합니다.
+              운용리스는 약정 거리를 초과하면 정산 비용이 발생하므로 실제 운행량보다 여유 있게 잡는 편이 안전합니다.
+            </td>
+          </tr>
+          <tr>
+            <th>보험 가입</th>
+            <td>
+              <b>직접 가입</b>하시거나 <b>가입 요청</b>하실 수 있습니다.
+              영업용(노란색 번호판)은 자가용보다 보험료가 높게 책정됩니다.
+            </td>
+          </tr>
+          <tr>
+            <th>외주 옵션</th>
+            <td>
+              썬팅 · 블랙박스 · 적재함 바닥 · 공구함 · 파워게이트 등 출고 후 장착 항목은
+              별도 견적으로 안내하며, 상품에 따라 월 납입금에 포함할 수도 있습니다.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <b>실제 적용 금리와 승인 조건은 금융사 심사 결과에 따라 결정됩니다.</b>
+      고객 구분(개인 · 개인사업자 · 법인), 사업 이력, 신용 상태에 따라 달라지므로
+      위 내용은 상품 구조를 이해하시기 위한 일반 안내로 봐주시고,
+      정확한 조건은 견적서를 통해 확인해 주세요.
+      견적 요청은 무료이며 신청만으로 계약 의무가 생기지 않습니다.
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>내 조건으로는 <em>얼마</em>일까요</h2>
+    <p>차량과 조건을 선택하시면 영업일 1일 이내에 견적서를 보내드립니다.</p>
+    <div class="btn-row center">
+      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      <a class="btn btn-line" href="contact.html">문의하기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 리스 · 할부 전문</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>

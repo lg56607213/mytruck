@@ -1,0 +1,18 @@
+# 배포 산출물 (배포파일준비.bat 이 자동으로 만듭니다)
+deploy/
+deploy*.zip
+
+# 작업 중 생긴 임시 폴더
+새 폴더/
+새 폴더 */
+
+# 원본 가격표 — 저장소가 공개(public)라 기본적으로 제외합니다.
+# 함께 올리려면 아래 줄을 지우세요.
+*.xlsx
+
+# OS / 편집기
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+node_modules/

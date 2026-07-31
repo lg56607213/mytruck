@@ -1,0 +1,13 @@
+# Netlify 주소 규칙 (이 파일은 배포 루트에 그대로 올라갑니다)
+# 200 = 주소는 그대로 두고 해당 파일을 보여줌 (리다이렉트 아님)
+
+# --- 광고용 짧은 주소 → 견적요청 폼 ---
+/quote      /quote.html      200
+/q          /quote.html      200
+
+# --- 나머지 페이지도 .html 없이 접속 가능 ---
+/about      /about.html      200
+/products   /products.html   200
+/board      /board.html      200
+/contact    /contact.html    200
+/home       /index.html      200

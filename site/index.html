@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mytruck | 화물차 리스 · 할부 전문</title>
+<meta name="description" content="포터·봉고부터 특장차까지, 화물차 리스와 할부를 가장 낮은 조건으로 안내해 드립니다. 정비포함 리스 상품 운영. 온라인 견적 신청 후 영업일 1일 이내 회신.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  /* ===== HERO ===== */
+  .hero {
+    background:
+      radial-gradient(900px 420px at 88% 8%, rgba(201,168,76,.16), transparent 60%),
+      linear-gradient(180deg, #0A1628 0%, #101F36 100%);
+    color: #fff; padding: 92px 0 84px;
+  }
+  .hero .tagline {
+    display: inline-block; padding: 7px 15px; border-radius: 100px;
+    background: rgba(201,168,76,.13); border: 1px solid rgba(201,168,76,.35);
+    color: #C9A84C; font-size: 12.5px; font-weight: 700; margin-bottom: 22px;
+  }
+  .hero h1 {
+    font-size: 44px; font-weight: 800; line-height: 1.28;
+    letter-spacing: -.03em; margin-bottom: 20px; word-break: keep-all;
+  }
+  .hero h1 em { color: #C9A84C; font-style: normal; }
+  .hero .lead {
+    font-size: 16.5px; color: #A9B4C6; line-height: 1.85;
+    margin-bottom: 34px; max-width: 560px; word-break: keep-all;
+  }
+  .hero-stats {
+    display: grid; grid-template-columns: repeat(3, auto); gap: 40px;
+    margin-top: 50px; padding-top: 30px;
+    border-top: 1px solid rgba(255,255,255,.1); justify-content: start;
+  }
+  .hero-stats .n { font-size: 27px; font-weight: 800; color: #C9A84C; letter-spacing: -.02em; }
+  .hero-stats .l { font-size: 12.5px; color: #8A97AB; margin-top: 5px; }
+  @media (max-width: 760px) {
+    .hero { padding: 60px 0 56px; }
+    .hero h1 { font-size: 30px; }
+    .hero .lead { font-size: 15px; }
+    .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; }
+    .hero-stats .n { font-size: 20px; }
+    .hero-stats .l { font-size: 11.5px; }
+  }
+
+  /* ===== 상품 카드 ===== */
+  .prod { display: block; position: relative; overflow: hidden; }
+  .prod .tag {
+    display: inline-block; padding: 4px 11px; border-radius: 100px;
+    background: #F1EAD6; color: #8A6714; font-size: 11.5px; font-weight: 800; margin-bottom: 13px;
+  }
+  .prod h3 { font-size: 19px; }
+  .prod .key {
+    margin-top: 16px; padding-top: 14px; border-top: 1px dashed #E5E8EE;
+    font-size: 13px; color: #0A1628; font-weight: 700;
+  }
+  .prod .key span { color: #8A94A6; font-weight: 500; }
+
+  /* ===== 정비 배너 ===== */
+  .mnt-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; }
+  @media (max-width: 860px) { .mnt-grid { grid-template-columns: 1fr; gap: 30px; } }
+  .mnt-grid h2 { font-size: 27px; font-weight: 800; line-height: 1.35; margin-bottom: 16px; word-break: keep-all; }
+  .mnt-grid h2 em { color: #C9A84C; font-style: normal; }
+  .mnt-grid > div > p { font-size: 15px; color: #A9B4C6; line-height: 1.85; margin-bottom: 24px; word-break: keep-all; }
+  .mnt-list { display: grid; gap: 10px; }
+  .mnt-item {
+    display: flex; gap: 13px; align-items: flex-start;
+    background: rgba(255,255,255,.045); border: 1px solid rgba(255,255,255,.09);
+    border-radius: 11px; padding: 15px 17px;
+  }
+  .mnt-item .ck { color: #C9A84C; font-weight: 800; flex-shrink: 0; }
+  .mnt-item b { display: block; font-size: 14.5px; color: #fff; margin-bottom: 3px; }
+  .mnt-item span { font-size: 13px; color: #8A97AB; line-height: 1.7; word-break: keep-all; }
+  @media (max-width: 600px) { .mnt-grid h2 { font-size: 22px; } }
+
+  /* ===== 절차 ===== */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: f; }
+  @media (max-width: 860px) { .flow { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .flow { grid-template-columns: 1fr; } }
+  .flow-item {
+    background: #fff; border: 1px solid #E5E8EE; border-radius: 14px;
+    padding: 26px 22px; position: relative;
+  }
+  .flow-item .no {
+    width: 34px; height: 34px; border-radius: 9px; background: #C9A84C; color: #0A1628;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800; margin-bottom: 15px;
+  }
+  .flow-item h3 { font-size: 16px; font-weight: 800; color: #0A1628; margin-bottom: 8px; }
+  .flow-item p { font-size: 13.5px; color: #6B7280; line-height: 1.75; word-break: keep-all; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <span class="tagline">포터 · 봉고부터 특장차까지</span>
+    <h1>화물차 리스와 할부,<br><em>조건부터 비교</em>하고 결정하세요</h1>
+    <p class="lead">
+      운용리스 · 금융리스 · 할부를 한자리에서 비교해 드립니다.
+      차량과 조건만 선택하시면 영업일 1일 이내에 맞춤 견적서를 이메일로 보내드립니다.
+    </p>
+    <div class="btn-row">
+      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">1분 견적요청하기</a>
+      <a class="btn btn-line" href="products.html">상품 먼저 둘러보기</a>
+    </div>
+    <div class="hero-stats">
+      <div><div class="n">1<span style="font-size:15px">일 이내</span></div><div class="l">견적 회신</div></div>
+      <div><div class="n">12~60<span style="font-size:15px">개월</span></div><div class="l">계약 기간</div></div>
+      <div><div class="n">24<span style="font-size:15px">시간</span></div><div class="l">온라인 접수</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 강점 ===== -->
+<section class="sec tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Why Mytruck</p>
+      <h2>화물차만 다룹니다</h2>
+      <p>승용차와 화물차는 계약 구조도, 심사 기준도, 정비 항목도 다릅니다.<br>화물차 한 분야만 보기 때문에 조건을 더 정확하게 맞춰 드릴 수 있습니다.</p>
+    </div>
+    <div class="grid g3">
+      <div class="card">
+        <div class="ico">01</div>
+        <h3>전 차종 · 특장 포함</h3>
+        <p>포터 · 봉고 카고부터 내장탑차, 냉동탑차, 윙바디, 파워게이트, 덤프까지. 특장 비용도 월 납입금에 함께 넣어 초기 부담을 낮출 수 있습니다.</p>
+      </div>
+      <div class="card">
+        <div class="ico">02</div>
+        <h3>세 가지 상품 비교</h3>
+        <p>운용리스 · 금융리스 · 할부를 같은 조건으로 나란히 계산해 드립니다. 사업자 형태와 절세 방향에 따라 유리한 쪽이 달라집니다.</p>
+      </div>
+      <div class="card">
+        <div class="ico">03</div>
+        <h3>정비포함 상품 운영</h3>
+        <p>소모품과 정기점검을 월 납입금에 포함하는 정비포함형을 함께 안내합니다. 예상치 못한 정비비 지출을 매달 고정비로 바꿀 수 있습니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 상품 ===== -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Products</p>
+      <h2>어떤 방식이 맞을까요</h2>
+      <p>소유 형태와 회계 처리 방식이 다릅니다. 상황에 맞는 쪽을 함께 찾아 드립니다.</p>
+    </div>
+    <div class="grid g3">
+      <a class="card prod" href="products.html#operating">
+        <span class="tag">경비처리 유리</span>
+        <h3>운용리스</h3>
+        <p>차량 소유권은 리스사에 있고, 매달 납입하는 리스료 전액을 비용으로 처리할 수 있습니다. 만기에는 반납 · 연장 · 인수 중 선택합니다.</p>
+        <div class="key">부채비율 영향 없음 <span>· 자산 미계상</span></div>
+        <span class="more">자세히 보기 →</span>
+      </a>
+      <a class="card prod" href="products.html#finance">
+        <span class="tag">소유권 이전</span>
+        <h3>금융리스</h3>
+        <p>차량을 자산으로 등록하고 감가상각과 이자비용을 처리합니다. 계약 만기 시 소유권이 고객에게 이전됩니다.</p>
+        <div class="key">자산 계상 <span>· 감가상각 + 이자</span></div>
+        <span class="more">자세히 보기 →</span>
+      </a>
+      <a class="card prod" href="products.html#installment">
+        <span class="tag">처음부터 내 명의</span>
+        <h3>할부</h3>
+        <p>출고 시점부터 차량이 본인 명의가 됩니다. 원금과 이자를 나누어 납입하며, 완납 후 별도 절차가 없습니다.</p>
+        <div class="key">즉시 소유 <span>· 원금 + 이자 분할</span></div>
+        <span class="more">자세히 보기 →</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 정비포함 ===== -->
+<section class="sec dark">
+  <div class="wrap mnt-grid">
+    <div>
+      <p class="eyebrow" style="font-size:11px;letter-spacing:.18em;color:#C9A84C;font-weight:700;text-transform:uppercase;margin-bottom:10px">Maintenance</p>
+      <h2>정비비까지 <em>월 납입금 하나로</em></h2>
+      <p>
+        화물차는 주행거리가 길어 소모품 교체 주기가 빠릅니다.
+        정비포함형을 선택하시면 엔진오일부터 타이어까지 정해진 범위의 정비를
+        월 납입금에 포함해 처리할 수 있습니다.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn-gold" href="products.html#maintenance">정비 상품 자세히 보기</a>
+      </div>
+    </div>
+    <div class="mnt-list">
+      <div class="mnt-item">
+        <span class="ck">✓</span>
+        <div><b>정비 불포함형</b><span>정비는 직접 처리하고 납입금을 가장 낮게 가져가는 방식</span></div>
+      </div>
+      <div class="mnt-item">
+        <span class="ck">✓</span>
+        <div><b>실속형</b><span>엔진오일 · 오일필터 등 기본 소모품과 법정 정기점검 중심</span></div>
+      </div>
+      <div class="mnt-item">
+        <span class="ck">✓</span>
+        <div><b>일반형</b><span>기본 소모품에 브레이크패드 · 배터리 · 와이퍼 등을 추가</span></div>
+      </div>
+      <div class="mnt-item">
+        <span class="ck">✓</span>
+        <div><b>고급형</b><span>타이어 교체와 주요 부품까지 폭넓게 포함하는 방식</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 절차 ===== -->
+<section class="sec tint">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Process</p>
+      <h2>견적요청부터 출고까지</h2>
+      <p>온라인으로 조건을 남기시면 나머지는 저희가 준비해 드립니다.</p>
+    </div>
+    <div class="flow">
+      <div class="flow-item">
+        <div class="no">1</div>
+        <h3>견적 요청</h3>
+        <p>차량과 조건을 선택해 온라인으로 신청합니다. 1분이면 충분합니다.</p>
+      </div>
+      <div class="flow-item">
+        <div class="no">2</div>
+        <h3>견적서 발송</h3>
+        <p>영업일 1일 이내에 조건별 월 납입금을 정리한 견적서를 이메일로 보내드립니다.</p>
+      </div>
+      <div class="flow-item">
+        <div class="no">3</div>
+        <h3>상담 · 심사</h3>
+        <p>조건을 조율한 뒤 서류를 접수하고 금융사 심사를 진행합니다.</p>
+      </div>
+      <div class="flow-item">
+        <div class="no">4</div>
+        <h3>계약 · 출고</h3>
+        <p>계약서를 작성하고 차량을 출고합니다. 특장 작업이 있으면 완료 후 인도됩니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-band">
+  <div class="wrap">
+    <h2>지금 <em>무료 견적</em>을 받아보세요</h2>
+    <p>차량과 조건만 선택하시면 됩니다. 계약을 원하실 때만 연락드립니다.</p>
+    <div class="btn-row center">
+      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      <a class="btn btn-line" href="contact.html">먼저 문의하기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 리스 · 할부 전문</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
