@@ -140,3 +140,46 @@ function fmtPhone(el) {
   else if (v.length > 3) v = v.slice(0, 3) + '-' + v.slice(3);
   el.value = v;
 }
+
+/* ================================================
+   문의 저장소 전송
+   기존 EmailJS 메일은 그대로 두고, 같은 내용을 저장소에도 남긴다.
+   메일은 즉시 알림용, 저장소는 집계용이다.
+   (메일 본문 텍스트만으로는 "어떤 키워드로 몇 건 왔는지" 를 셀 수 없다)
+
+   저장 실패는 폼 동작에 영향을 주지 않는다. 조용히 넘어간다.
+   ================================================ */
+var MT_LEADS_URL = 'https://leads.jdgp.workers.dev/lead';
+
+function mtSaveLead(payload) {
+  var s = {};
+  try { s = mtCapture() || {}; } catch (e) {}
+
+  var body = {
+    brand: 'mytruck',
+    utm_source:   s.utm_source || s.src || '',
+    utm_medium:   s.utm_medium || '',
+    utm_campaign: s.utm_campaign || '',
+    utm_content:  s.utm_content || '',
+    utm_term:     s.utm_term || '',
+    referrer:     s._ref || document.referrer || '',
+    landing:      s._page || location.pathname,
+    first_seen:   s._at || ''
+  };
+  for (var k in payload) if (Object.prototype.hasOwnProperty.call(payload, k)) body[k] = payload[k];
+
+  // 허니팟: 화면에 안 보이는 칸이 채워져 있으면 봇이므로 서버가 걸러낸다
+  var hp = document.getElementById('mt-hp');
+  if (hp && hp.value) body.website = hp.value;
+
+  try {
+    return fetch(MT_LEADS_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+      keepalive: true
+    }).catch(function () { /* 저장 실패는 무시 */ });
+  } catch (e) {
+    return Promise.resolve();
+  }
+}

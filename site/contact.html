@@ -140,6 +140,7 @@
         </div>
 
         <label class="agree">
+          <input type="text" id="mt-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
           <input type="checkbox" id="c-agree">
           <span>개인정보 수집 · 이용에 동의합니다. <span style="color:#9AA0AC">(문의 응대 목적, 보관 1년)</span></span>
         </label>
@@ -250,6 +251,16 @@ document.getElementById('c-submit').addEventListener('click', async function () 
   document.getElementById('loading').classList.add('show');
 
   try {
+    // 저장소에도 남긴다 (집계용). 실패해도 메일 발송은 그대로 진행된다.
+    mtSaveLead({
+      form: 'contact',
+      name: v('c-name'),
+      phone: v('c-phone'),
+      email: v('c-email'),
+      category: v('c-type'),
+      memo: v('c-msg')
+    });
+
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
     document.getElementById('loading').classList.remove('show');
     document.getElementById('formWrap').style.display = 'none';

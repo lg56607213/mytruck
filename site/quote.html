@@ -542,6 +542,7 @@
         <div class="contact-box">
           <div>
             <label class="flabel" for="inp-name">이름 / 상호</label>
+            <input type="text" id="mt-hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
             <input class="input-field" type="text" id="inp-name" placeholder="홍길동 또는 (주)한길물류">
           </div>
           <div>
@@ -1027,6 +1028,17 @@ async function submitForm() {
   document.getElementById("loading").classList.add("show");
 
   try {
+    // 저장소에도 남긴다 (집계용). 실패해도 메일 발송은 그대로 진행된다.
+    mtSaveLead({
+      form: 'quote',
+      name: params.customer_name,
+      phone: params.customer_phone,
+      email: params.customer_email,
+      category: params.car_full,
+      amount: params.estimated_price,
+      memo: params.quote_detail || params.message || ''
+    });
+
     await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
     document.getElementById("loading").classList.remove("show");
     document.getElementById("form-wrap").style.display = "none";
