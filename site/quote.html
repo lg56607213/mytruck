@@ -543,12 +543,11 @@
 
         <div class="frow">
           <span class="flabel">계약 기간</span>
-          <div class="chips" id="period-grp">
-            <div class="chip" onclick="selOne(this,'period-grp')">12개월</div>
-            <div class="chip" onclick="selOne(this,'period-grp')">24개월</div>
-            <div class="chip" onclick="selOne(this,'period-grp')">36개월</div>
-            <div class="chip" onclick="selOne(this,'period-grp')">48개월</div>
-            <div class="chip" onclick="selOne(this,'period-grp')">60개월</div>
+          <div class="chips" id="period-grp"></div>
+          <div id="period-custom-wrap" style="display:none;margin-top:10px">
+            <input class="input-field" type="text" id="period-custom" maxlength="20"
+                   placeholder="예) 18개월" oninput="periodInput(this)">
+            <p class="contact-hint">원하시는 기간을 직접 적어주세요.</p>
           </div>
         </div>
 
@@ -730,7 +729,7 @@ const state = {
   opts: [],            // [{n, p}]  제조사 옵션
   ext: [],             // 외주 옵션 (추천 항목)
   extCustom: [],       // 외주 옵션 (직접 입력)
-  prepay: "", deposit: "", period: "", km: "",
+  prepay: "", deposit: "", period: "", periodCustom: false, km: "",
   insurance: "", maintenance: "",
 
   /* 중고차 (리스 전용) — 재고가 매일 바뀌어 가격표를 두지 않고 직접 입력받는다 */
@@ -940,6 +939,53 @@ function selCard(el, grpId, key) {
   state[key] = el.querySelector(".ct").textContent.trim();
 }
 
+/* ── 계약 기간 : 신차와 중고차의 선택지가 다르다 ────────────────── */
+const PERIODS_NEW  = ["12개월", "24개월", "36개월", "48개월", "60개월"];
+const PERIODS_USED = ["6개월 미만", "6개월", "12개월", "24개월"];
+
+function renderPeriods() {
+  const grp  = document.getElementById("period-grp");
+  const mode = state.isUsed ? "used" : "new";
+  if (grp.dataset.mode === mode) return;      // 같은 목록이면 선택을 유지한다
+  grp.dataset.mode = mode;
+  grp.innerHTML = "";
+
+  const list = (state.isUsed ? PERIODS_USED : PERIODS_NEW).concat("직접입력");
+  list.forEach(name => {
+    const d = document.createElement("div");
+    d.className = "chip";
+    d.textContent = name;
+    d.onclick = () => pickPeriod(d, name);
+    grp.appendChild(d);
+  });
+
+  state.period = "";
+  state.periodCustom = false;
+  document.getElementById("period-custom-wrap").style.display = "none";
+  document.getElementById("period-custom").value = "";
+}
+
+function pickPeriod(el, name) {
+  document.querySelectorAll("#period-grp .chip").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  const custom = (name === "직접입력");
+  state.periodCustom = custom;
+  const wrap = document.getElementById("period-custom-wrap");
+  const inp  = document.getElementById("period-custom");
+  wrap.style.display = custom ? "block" : "none";
+  if (custom) {
+    state.period = inp.value.trim();
+    inp.focus();
+  } else {
+    state.period = name;
+    inp.value = "";
+  }
+}
+
+function periodInput(el) {
+  state.period = el.value.trim();
+}
+
 function fmtPhone(el) {
   let v = el.value.replace(/\D/g, "");
   if (v.length > 11) v = v.slice(0, 11);
@@ -972,6 +1018,7 @@ function checkStep(n) {
   }
   if (n === 4) {
     if (!state.prepay || !state.deposit) return "선납금과 보증금을 선택해 주세요";
+    if (state.periodCustom && !state.period) return "원하시는 계약 기간을 입력해 주세요";
     if (!state.period || !state.km) return "계약기간과 주행거리를 선택해 주세요";
     if (!state.insurance) return "보험 가입 방식을 선택해 주세요";
     if (!state.isUsed && !state.maintenance) return "정비 서비스 여부를 선택해 주세요";
@@ -1022,6 +1069,7 @@ function render(n) {
     }
   }
   if (n === 4) {
+    renderPeriods();
     // 중고차는 정비 서비스가 없으므로 선택 자체를 감춘다
     document.getElementById("mnt-row").style.display = state.isUsed ? "none" : "block";
     document.getElementById("mnt-used-note").style.display = state.isUsed ? "block" : "none";
@@ -1220,6 +1268,8 @@ async function submitForm() {
 /* ================================================
    TOAST
    ================================================ */
+renderPeriods();   // 상수 선언 뒤여야 한다 (const 는 호이스팅되지 않는다)
+
 let toastTimer = null;
 function showToast(msg) {
   const t = document.getElementById("toast");
