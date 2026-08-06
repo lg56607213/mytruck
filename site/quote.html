@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>견적요청하기 | Mytruck</title>
-<meta name="description" content="화물차 리스·할부 온라인 견적 신청. 차량과 조건을 선택하시면 영업일 1일 이내에 맞춤 견적서를 이메일로 보내드립니다.">
+<meta name="description" content="화물차 리스·할부·중고차 리스 온라인 견적 신청. 차량과 조건을 선택하시면 영업일 1일 이내에 맞춤 견적서를 이메일로 보내드립니다.">
 
 <!-- EmailJS SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
@@ -175,6 +175,15 @@
   }
   .contact-hint { font-size: 11px; color: #AAA; margin-top: 2px; line-height: 1.7; }
 
+  /* 중고차 안내 */
+  .used-note {
+    background: #FBF7EF; border: 0.5px solid #E8DCC2; border-radius: 10px;
+    padding: 14px 16px; margin-bottom: 22px;
+    font-size: 12.5px; line-height: 1.75; color: #5A5348;
+  }
+  .used-note b { color: #7A5B14; }
+  .used-note .warn { display: block; margin-top: 6px; color: #A0522D; font-weight: 700; }
+
   /* ===== AGREE ===== */
   .agree-row { display: flex; align-items: flex-start; gap: 9px; margin-top: 16px; cursor: pointer; }
   .agree-row input { margin-top: 2px; width: 15px; height: 15px; accent-color: #C9A84C; cursor: pointer; }
@@ -305,11 +314,63 @@
       <div class="step act" id="s1">
         <p class="sec-eyebrow">Step 1</p>
         <p class="sec-title">내 차 만들기</p>
-        <p class="sec-desc">제조사부터 순서대로 선택해 주세요</p>
+        <p class="sec-desc">제조사부터 순서대로 선택해 주세요<br>중고차를 찾으시면 <b>중고</b>를 선택하고 원하시는 차종을 직접 적어주세요</p>
 
         <div class="frow">
           <span class="flabel">제조사</span>
           <div class="chips" id="brand-grp"></div>
+        </div>
+
+        <!-- 중고차 : 직접 입력 -->
+        <div id="used-wrap" style="display:none">
+          <div class="used-note">
+            <b>중고차는 리스로만 진행됩니다.</b>
+            재고가 매일 바뀌기 때문에 가격을 미리 띄우지 않습니다.
+            원하시는 차종과 필요 시기를 남겨주시면 <b>차종 · 주행거리 · 상태를 확인해 견적을 메일로 보내드립니다.</b>
+            <span class="warn">중고차 상품에는 정비 서비스가 포함되지 않습니다.</span>
+          </div>
+
+          <div class="frow">
+            <span class="flabel">원하시는 차종 <span style="color:#B07D20">*</span></span>
+            <input class="input-field" type="text" id="used-model"
+                   placeholder="예) 현대 포터2 초장축 카고 / 5톤 윙바디">
+            <p class="contact-hint">제조사 · 모델 · 적재함 형태를 아시는 만큼만 적어주셔도 됩니다.</p>
+          </div>
+
+          <div class="cond-grid">
+            <div class="frow">
+              <span class="flabel">희망 연식 <span class="sub">(선택)</span></span>
+              <input class="input-field" type="text" id="used-year" placeholder="예) 2021년식 이후">
+            </div>
+            <div class="frow">
+              <span class="flabel">희망 주행거리 <span class="sub">(선택)</span></span>
+              <input class="input-field" type="text" id="used-km" placeholder="예) 15만km 이하">
+            </div>
+          </div>
+
+          <div class="frow">
+            <span class="flabel">차량 상태 <span class="sub">(선택)</span></span>
+            <div class="chips" id="usedcond-grp">
+              <div class="chip" onclick="selOne(this,'usedcond-grp')">무사고 우선</div>
+              <div class="chip" onclick="selOne(this,'usedcond-grp')">단순 수리 가능</div>
+              <div class="chip" onclick="selOne(this,'usedcond-grp')">상태보다 가격 우선</div>
+            </div>
+          </div>
+
+          <div class="frow">
+            <span class="flabel">필요 시기 <span style="color:#B07D20">*</span></span>
+            <div class="chips" id="usedwhen-grp">
+              <div class="chip" onclick="selOne(this,'usedwhen-grp')">2주 이내</div>
+              <div class="chip" onclick="selOne(this,'usedwhen-grp')">1개월 이내</div>
+              <div class="chip" onclick="selOne(this,'usedwhen-grp')">3개월 이내</div>
+              <div class="chip" onclick="selOne(this,'usedwhen-grp')">아직 미정</div>
+            </div>
+          </div>
+
+          <div class="frow">
+            <span class="flabel">예산 <span class="sub">(선택)</span></span>
+            <input class="input-field" type="text" id="used-budget" placeholder="예) 월 납입금 80만원 내외 / 차량가 3,000만원대">
+          </div>
         </div>
 
         <div class="frow" id="cat-wrap" style="display:none">
@@ -415,7 +476,7 @@
         <div class="frow">
           <span class="flabel">상품 종류</span>
           <div class="card-grid three" id="product-grp">
-            <div class="sel-card" onclick="selCard(this,'product-grp','product')">
+            <div class="sel-card" id="card-installment" onclick="selCard(this,'product-grp','product')">
               <div class="ct">할부</div>
               <div class="cs">처음부터 내 명의<br>원금 + 이자 분할 납부</div>
             </div>
@@ -428,6 +489,9 @@
               <div class="cs">자산으로 등록<br>만기 시 소유권 이전</div>
             </div>
           </div>
+          <p class="contact-hint" id="used-product-note" style="display:none">
+            중고차는 <b>리스 상품으로만</b> 진행됩니다.
+          </p>
         </div>
 
         <div class="frow">
@@ -513,7 +577,7 @@
           </div>
         </div>
 
-        <div class="frow">
+        <div class="frow" id="mnt-row">
           <span class="flabel">정비 서비스</span>
           <div class="card-grid" id="mnt-grp">
             <div class="sel-card" onclick="selCard(this,'mnt-grp','maintenance')">
@@ -525,6 +589,11 @@
               <div class="cs">소모품 &middot; 정기점검 포함</div>
             </div>
           </div>
+        </div>
+
+        <div class="used-note" id="mnt-used-note" style="display:none">
+          <b>중고차 상품에는 정비 서비스가 제공되지 않습니다.</b>
+          정비는 직접 처리하시거나, 신차 리스로 진행하실 때 정비포함 상품을 선택하실 수 있습니다.
         </div>
 
         <div class="btn-row">
@@ -573,8 +642,10 @@
           <div class="sum-row"><span class="sum-key">상품 종류</span><span class="sum-val" id="sum-product">-</span></div>
           <div class="sum-row"><span class="sum-key">운영 방법</span><span class="sum-val" id="sum-usage">-</span></div>
           <div class="sum-row"><span class="sum-key">차량</span><span class="sum-val" id="sum-car">-</span></div>
-          <div class="sum-row"><span class="sum-key">예상 차량가</span><span class="sum-val" id="sum-price">-</span></div>
-          <div class="sum-row"><span class="sum-key">제조사 옵션</span><span class="sum-val" id="sum-opts">-</span></div>
+          <div class="sum-row" id="row-usedcond" style="display:none"><span class="sum-key">희망 연식 / 주행</span><span class="sum-val" id="sum-usedcond">-</span></div>
+          <div class="sum-row" id="row-usedwhen" style="display:none"><span class="sum-key">상태 / 필요시기</span><span class="sum-val" id="sum-usedwhen">-</span></div>
+          <div class="sum-row" id="row-price"><span class="sum-key">예상 차량가</span><span class="sum-val" id="sum-price">-</span></div>
+          <div class="sum-row" id="row-opts"><span class="sum-key">제조사 옵션</span><span class="sum-val" id="sum-opts">-</span></div>
           <div class="sum-row"><span class="sum-key">외주 옵션</span><span class="sum-val" id="sum-ext">-</span></div>
           <div class="sum-row"><span class="sum-key">선납금 / 보증금</span><span class="sum-val" id="sum-cond">-</span></div>
           <div class="sum-row"><span class="sum-key">계약기간 / 주행거리</span><span class="sum-val" id="sum-term">-</span></div>
@@ -660,8 +731,14 @@ const state = {
   ext: [],             // 외주 옵션 (추천 항목)
   extCustom: [],       // 외주 옵션 (직접 입력)
   prepay: "", deposit: "", period: "", km: "",
-  insurance: "", maintenance: ""
+  insurance: "", maintenance: "",
+
+  /* 중고차 (리스 전용) — 재고가 매일 바뀌어 가격표를 두지 않고 직접 입력받는다 */
+  isUsed: false,
+  usedModel: "", usedYear: "", usedKm: "", usedCond: "", usedWhen: "", usedBudget: ""
 };
+
+const USED_BRAND = "중고";
 
 const won = n => Number(n || 0).toLocaleString("ko-KR");
 
@@ -696,14 +773,35 @@ function hideFrom(level) {
 }
 
 (function initBrands() {
-  fill("brand-grp", null, Object.keys(TRUCK_DATA), "chip", brand => {
+  // 신차 제조사 + 중고. 중고는 가격표가 없어 직접 입력으로 빠진다.
+  fill("brand-grp", null, Object.keys(TRUCK_DATA).concat(USED_BRAND), "chip", brand => {
     state.brand = brand;
     state.cat = state.model = state.body = state.trim = "";
     state.opts = [];
     hideFrom(0);
+
+    state.isUsed = (brand === USED_BRAND);
+    document.getElementById("used-wrap").style.display = state.isUsed ? "block" : "none";
+
+    if (state.isUsed) {
+      // 중고차는 정비 서비스를 제공하지 않는다
+      state.maintenance = "해당 없음 (중고차)";
+      return;
+    }
+    if (state.maintenance === "해당 없음 (중고차)") state.maintenance = "";
+    state.usedModel = state.usedYear = state.usedKm = state.usedCond = state.usedWhen = state.usedBudget = "";
     fill("cat-grp", "cat-wrap", Object.keys(TRUCK_DATA[brand]), "sub-chip", pickCat);
   });
 })();
+
+/* 중고차 직접 입력값 수집 */
+function readUsedInputs() {
+  const v = id => (document.getElementById(id).value || "").trim();
+  state.usedModel  = v("used-model");
+  state.usedYear   = v("used-year");
+  state.usedKm     = v("used-km");
+  state.usedBudget = v("used-budget");
+}
 
 function pickCat(cat) {
   state.cat = cat;
@@ -829,7 +927,10 @@ function allExt() {
 function selOne(el, grpId) {
   document.querySelectorAll("#" + grpId + " .chip").forEach(c => c.classList.remove("sel"));
   el.classList.add("sel");
-  const key = { "prepay-grp": "prepay", "deposit-grp": "deposit", "period-grp": "period", "km-grp": "km" }[grpId];
+  const key = {
+    "prepay-grp": "prepay", "deposit-grp": "deposit", "period-grp": "period", "km-grp": "km",
+    "usedcond-grp": "usedCond", "usedwhen-grp": "usedWhen"
+  }[grpId];
   if (key) state[key] = el.textContent.trim();
 }
 
@@ -854,18 +955,26 @@ const TOTAL_STEPS = 5;
 
 function checkStep(n) {
   if (n === 1) {
-    if (!state.trim) return "차량을 트림까지 선택해 주세요";
+    if (state.isUsed) {
+      readUsedInputs();
+      if (!state.usedModel) return "원하시는 중고 차종을 적어주세요";
+      if (!state.usedWhen) return "차량이 필요한 시기를 선택해 주세요";
+    } else {
+      if (!state.brand) return "제조사를 선택해 주세요";
+      if (!state.trim) return "차량을 트림까지 선택해 주세요";
+    }
   }
   if (n === 3) {
     if (!state.custType) return "고객 구분을 선택해 주세요";
     if (!state.product) return "상품 종류를 선택해 주세요";
+    if (state.isUsed && state.product === "할부") return "중고차는 리스로만 진행됩니다. 운용리스 또는 금융리스를 선택해 주세요";
     if (!state.usage) return "운영 방법을 선택해 주세요";
   }
   if (n === 4) {
     if (!state.prepay || !state.deposit) return "선납금과 보증금을 선택해 주세요";
     if (!state.period || !state.km) return "계약기간과 주행거리를 선택해 주세요";
     if (!state.insurance) return "보험 가입 방식을 선택해 주세요";
-    if (!state.maintenance) return "정비 서비스 여부를 선택해 주세요";
+    if (!state.isUsed && !state.maintenance) return "정비 서비스 여부를 선택해 주세요";
   }
   return null;
 }
@@ -902,6 +1011,21 @@ function render(n) {
     const pl = document.getElementById("pl" + i);
     if (pl) pl.classList.toggle("done", i < n);
   }
+  if (n === 3) {
+    // 중고차는 리스로만 진행한다 — 할부 카드를 감춘다
+    const inst = document.getElementById("card-installment");
+    inst.style.display = state.isUsed ? "none" : "block";
+    document.getElementById("used-product-note").style.display = state.isUsed ? "block" : "none";
+    if (state.isUsed && state.product === "할부") {
+      state.product = "";
+      inst.classList.remove("sel");
+    }
+  }
+  if (n === 4) {
+    // 중고차는 정비 서비스가 없으므로 선택 자체를 감춘다
+    document.getElementById("mnt-row").style.display = state.isUsed ? "none" : "block";
+    document.getElementById("mnt-used-note").style.display = state.isUsed ? "block" : "none";
+  }
   if (n === TOTAL_STEPS) buildSummary();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
@@ -915,6 +1039,7 @@ function usageLabel() {
 }
 
 function carLabel() {
+  if (state.isUsed) return state.usedModel ? "[중고] " + state.usedModel : "[중고] 차종 미입력";
   const parts = [];
   [state.brand, state.cat, state.model, state.body, state.trim].forEach(v => {
     if (v && !parts.includes(v)) parts.push(v);   // 구분과 모델명이 겹치는 경우 중복 제거
@@ -924,6 +1049,21 @@ function carLabel() {
 
 function buildSummary() {
   const ext = allExt();
+  if (state.isUsed) readUsedInputs();
+
+  // 중고차는 가격표가 없어 차량가·제조사옵션 대신 희망 조건을 보여준다
+  const show = (id, on) => document.getElementById(id).style.display = on ? "flex" : "none";
+  show("row-usedcond", state.isUsed);
+  show("row-usedwhen", state.isUsed);
+  show("row-price", !state.isUsed);
+  show("row-opts", !state.isUsed);
+  if (state.isUsed) {
+    document.getElementById("sum-usedcond").textContent =
+      (state.usedYear || "연식 무관") + " / " + (state.usedKm || "주행거리 무관");
+    document.getElementById("sum-usedwhen").textContent =
+      (state.usedCond || "상태 무관") + " / " + (state.usedWhen || "-");
+  }
+
   document.getElementById("sum-custtype").textContent = state.custType || "-";
   document.getElementById("sum-product").textContent = state.product || "-";
   document.getElementById("sum-usage").textContent   = usageLabel();
@@ -954,8 +1094,26 @@ function validateAll() {
 }
 
 function buildDetail(p) {
+  const carBlock = state.isUsed
+    ? [
+        "── 중고차 희망 조건",
+        "차종       : " + p.used_model,
+        "희망연식   : " + p.used_year,
+        "희망주행   : " + p.used_km,
+        "차량상태   : " + p.used_cond,
+        "필요시기   : " + p.used_when,
+        "예산       : " + p.used_budget,
+        "정비상품   : 미제공 (중고차)"
+      ]
+    : [
+        "── 내차만들기",
+        "차량       : " + p.car_full,
+        "제조사옵션 : " + p.factory_options,
+        "예상차량가 : " + p.estimated_price
+      ];
+
   return [
-    "[화물차 견적 신청]",
+    state.isUsed ? "[중고 화물차 리스 견적 신청]" : "[화물차 견적 신청]",
     "신청일시   : " + p.submit_time,
     "",
     "── 신청자",
@@ -967,10 +1125,7 @@ function buildDetail(p) {
     "상품종류   : " + p.product_type,
     "운영방법   : " + p.usage_type,
     "",
-    "── 내차만들기",
-    "차량       : " + p.car_full,
-    "제조사옵션 : " + p.factory_options,
-    "예상차량가 : " + p.estimated_price,
+    ...carBlock,
     "",
     "── 외주옵션",
     "선택항목   : " + p.external_options,
@@ -982,12 +1137,13 @@ function buildDetail(p) {
     "계약기간   : " + p.period,
     "주행거리   : " + p.km,
     "보험가입   : " + p.insurance,
-    "정비서비스 : " + p.maintenance
+    ...(state.isUsed ? [] : ["정비서비스 : " + p.maintenance])
   ].join("\n");
 }
 
 async function submitForm() {
   if (!validateAll()) return;
+  if (state.isUsed) readUsedInputs();
 
   const now = new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" });
   const params = {
@@ -1005,8 +1161,16 @@ async function submitForm() {
     body_type:        state.body,
     trim:             state.trim,
     car_full:         carLabel(),
-    factory_options:  state.opts.length ? state.opts.map(o => o.n + "(+" + won(o.p) + "원)").join(", ") : "없음",
-    estimated_price:  won(totalPrice()) + "원",
+    vehicle_condition: state.isUsed ? "중고" : "신차",
+    used_model:       state.usedModel  || "-",
+    used_year:        state.usedYear   || "무관",
+    used_km:          state.usedKm     || "무관",
+    used_cond:        state.usedCond   || "무관",
+    used_when:        state.usedWhen   || "-",
+    used_budget:      state.usedBudget || "-",
+    factory_options:  state.isUsed ? "해당 없음 (중고)"
+                      : (state.opts.length ? state.opts.map(o => o.n + "(+" + won(o.p) + "원)").join(", ") : "없음"),
+    estimated_price:  state.isUsed ? "중고 재고 확인 후 산정" : won(totalPrice()) + "원",
     external_options: state.ext.length ? state.ext.join(", ") : "없음",
     external_custom:  state.extCustom.length ? state.extCustom.join(", ") : "없음",
     prepay:           state.prepay,
@@ -1030,7 +1194,7 @@ async function submitForm() {
   try {
     // 저장소에도 남긴다 (집계용). 실패해도 메일 발송은 그대로 진행된다.
     mtSaveLead({
-      form: 'quote',
+      form: state.isUsed ? 'quote-used' : 'quote',
       name: params.customer_name,
       phone: params.customer_phone,
       email: params.customer_email,
