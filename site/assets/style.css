@@ -243,3 +243,19 @@ ul.dot li b { color: #0A1628; }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading p { font-size: 14px; color: #6B7280; font-weight: 500; }
+
+/* ===== 홍보영상 ===== */
+.video-wrap {
+  max-width: 880px; margin: 0 auto;
+  border-radius: 16px; overflow: hidden;
+  background: #0A1628;
+  box-shadow: 0 14px 40px rgba(10, 22, 40, .14);
+}
+.video-wrap video {
+  display: block; width: 100%; height: auto;
+  aspect-ratio: 16 / 9; background: #0A1628;
+}
+.video-note {
+  max-width: 880px; margin: 16px auto 0;
+  text-align: center; font-size: 13.5px; color: #8A94A6;
+}
