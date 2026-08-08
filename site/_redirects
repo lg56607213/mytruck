@@ -1,13 +1,17 @@
-# Netlify 주소 규칙 (이 파일은 배포 루트에 그대로 올라갑니다)
-# 200 = 주소는 그대로 두고 해당 파일을 보여줌 (리다이렉트 아님)
+# Cloudflare Workers 주소 규칙 (배포 루트에 그대로 올라간다)
+#
+# 주의 — 여기에 "/quote → /quote.html" 같은 규칙을 넣으면 안 된다.
+#   Workers 정적 자산은 html_handling 설정에 따라
+#   /quote  요청을 quote.html 로 알아서 연결하고,
+#   /quote.html 요청은 다시 /quote 로 정리한다.
+#   그래서 .html 로 보내는 규칙을 넣으면 두 규칙이 서로를 가리켜
+#   무한 리다이렉트가 발생한다.
+#
+#   즉 /about /products /board /contact /quote 는
+#   규칙 없이도 확장자 없이 접속된다.
 
 # --- 광고용 짧은 주소 → 견적요청 폼 ---
-/quote      /quote.html      200
-/q          /quote.html      200
+/q      /quote   301
 
-# --- 나머지 페이지도 .html 없이 접속 가능 ---
-/about      /about.html      200
-/products   /products.html   200
-/board      /board.html      200
-/contact    /contact.html    200
-/home       /index.html      200
+# --- 예전 주소 호환 ---
+/home   /        301
