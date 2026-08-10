@@ -23,6 +23,7 @@ const CAT_TABS = [
      site/assets/cars/포터II_냉동탑차/photo.jpg
      site/assets/cars/포터II_윙바디/photo.jpg
 
+   파일 이름은 photo.png 또는 photo.jpg 둘 다 된다.
    폴더 이름은 카드에 보이는 차량명에서 만든다 (괄호·띄어쓰기는 _ 로).
    차끼리 사진을 돌려 쓰거나 대신 찾아주는 동작은 없다.
    그 차 폴더에 사진이 없으면 회색 트럭 그림이 나온다.
@@ -132,7 +133,10 @@ function buildCatalog() {
           v.badge = badgeOf(v);
           v.tags = tagsOf(v);
           v.folder = carFolder(v.name);
-          v.img = "assets/cars/" + encodeURIComponent(v.folder) + "/photo.jpg";
+          // 확장자는 png / jpg 둘 다 받는다. 앞의 것이 없으면 다음 것을 찾는다.
+          v.imgs = ["png", "jpg"].map(
+            ext => "assets/cars/" + encodeURIComponent(v.folder) + "/photo." + ext);
+          v.img = v.imgs[0];
           out.push(v);
         }
       }
