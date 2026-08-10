@@ -1,10 +1,11 @@
 # Mytruck — 화물차 리스 · 할부 홈페이지
 
-정적 웹사이트입니다. 서버 없이 Netlify에 파일만 올리면 동작합니다.
+정적 웹사이트입니다. 서버 없이 정적 파일만으로 동작합니다.
 견적요청과 문의하기는 EmailJS를 통해 이메일로 전달됩니다.
 
 - 도메인: **https://mytruck.kr**
 - 운영사: (주)제이디엔드
+- 호스팅: **Cloudflare Workers** (2026-08-09 Netlify에서 이전) → [INFRA.md](INFRA.md)
 
 ## 폴더 구조
 
@@ -22,11 +23,12 @@
 │       ├─ style.css         공통 디자인
 │       ├─ site.js           공통 스크립트 (모바일 메뉴 등)
 │       └─ posts.js          게시판 글 데이터  ← 글은 여기에 씁니다
-├─ deploy/                ← 배포용 (자동 생성, 직접 수정하지 않습니다)
+├─ wrangler.jsonc         Cloudflare Workers 배포 설정
 ├─ tools/xlsx-to-data.js  엑셀 → truck-data.js 변환기
 ├─ 화물차 Jason.xlsx       가격표 원본
 ├─ 데이터갱신.bat          엑셀 수정 후 실행
-├─ 배포파일준비.bat        Netlify에 올릴 deploy 폴더 생성
+├─ 배포파일준비.bat        (Netlify 시절 잔재 — 지금은 push 하면 자동 배포)
+├─ INFRA.md               도메인 · DNS · 리다이렉트 설정
 └─ README.md
 ```
 
@@ -73,14 +75,13 @@
   },
 ```
 
-저장 후 **배포파일준비.bat → deploy 폴더 드래그**하면 반영됩니다.
+저장 후 **커밋 → `main` 브랜치에 push** 하면 자동 배포됩니다.
 
 ### 가격표(차량 데이터) 갱신하기
 
 1. `화물차 Jason.xlsx` 수정
 2. **`데이터갱신.bat`** 더블클릭 → `site/truck-data.js` 자동 갱신
-3. **`배포파일준비.bat`** 더블클릭
-4. `deploy` 폴더를 Netlify에 드래그
+3. 커밋 후 `main` 브랜치에 push → 자동 배포
 
 엑셀 Sheet1 컬럼 규칙 (2행부터, 위 칸과 같으면 비워두는 병합 방식 그대로 지원):
 
@@ -92,11 +93,17 @@ B 제조사 | C 구분 | D 모델 | E 세부사양 | F 트림 | G 차량가 | H 
 
 ### 배포하기
 
-**`배포파일준비.bat`** 더블클릭 → 열린 `deploy` 폴더를 Netlify 화면의
-"Drag and drop your project folder here" 영역에 드래그.
+수정한 파일을 커밋해서 **`main` 브랜치에 push** 하면 끝입니다.
+Cloudflare가 `npx wrangler deploy` 를 자동으로 실행해 `site` 폴더를 배포합니다.
 
-> `화물차Online` 폴더 전체를 드래그하면 안 됩니다.
-> 가격표 엑셀이 `https://mytruck.kr/화물차%20Jason.xlsx` 로 공개됩니다.
+```bash
+git add .
+git commit -m "게시판 글 추가"
+git push
+```
+
+> 예전 Netlify 방식(`배포파일준비.bat` → `deploy` 폴더 드래그)은 더 이상 쓰지 않습니다.
+> 배포 대상 폴더는 [`wrangler.jsonc`](wrangler.jsonc) 의 `assets.directory` 로 지정되어 있습니다.
 
 ---
 
@@ -124,10 +131,13 @@ contact / about 에서는 `tel:` · `mailto:` 링크로 걸려 있어 휴대폰�
 광고 채널을 구분하려면 뒤에 `?src=` 를 붙이세요.
 
 ```
-https://www.mytruck.kr/quote?src=insta
-https://www.mytruck.kr/quote?src=tiktok
-https://www.mytruck.kr/quote?src=tiktok&utm_campaign=7월할인
+https://mytruck.kr/quote?src=insta
+https://mytruck.kr/quote?src=tiktok
+https://mytruck.kr/quote?src=tiktok&utm_campaign=7월할인
 ```
+
+> `www.` 를 붙여도 동작하고 `?src=` 값도 그대로 보존되지만, 301을 한 번 더 타므로
+> 새로 만드는 광고 링크는 위처럼 **`www.` 없이** 쓰는 편이 낫습니다.
 
 붙인 값은 견적·문의 메일의 **유입경로** 항목에 그대로 찍힙니다.
 
@@ -174,11 +184,15 @@ const EMAILJS_TEMPLATE_ID = "template_tiosvos";    // Mytruck 견적신청
 배포 후에는 EmailJS `Account → Security → Allowed Origins` 에
 `https://mytruck.kr` 과 `https://www.mytruck.kr` 을 추가해 주세요.
 
-## 도메인 (가비아 + Netlify)
+## 도메인 (Cloudflare)
 
-| 타입 | 호스트 | 값 |
-|---|---|---|
-| A | `@` | `75.2.60.5` |
-| CNAME | `www` | `<사이트이름>.netlify.app.` |
+2026-08-09 Netlify에서 Cloudflare로 이전했습니다.
+네임서버 · DNS 레코드 · 리다이렉트 룰 등 **대시보드에만 저장되는 설정**은
+전부 [INFRA.md](INFRA.md) 에 정리해 두었습니다.
 
-HTTPS 인증서(Let's Encrypt)는 Netlify가 자동 발급·갱신합니다.
+요약하면 `www` 는 301로 apex(`mytruck.kr`)로 넘어가고, HTTPS 인증서는
+Cloudflare가 자동 발급·갱신합니다.
+
+> 서브도메인을 새로 추가하려면 DNS 레코드만으로는 부족합니다.
+> **Workers 커스텀 도메인 등록까지** 해야 합니다 — 안 하면 HTTP 522가 납니다.
+> 자세한 내용은 [INFRA.md](INFRA.md) 참고.
