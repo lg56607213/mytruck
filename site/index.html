@@ -4,47 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mytruck | 화물차 리스 · 할부 전문</title>
-<meta name="description" content="포터·봉고부터 특장차까지, 화물차 리스와 할부를 가장 낮은 조건으로 안내해 드립니다. 정비포함 리스 상품과 중고 화물차 리스 운영. 온라인 견적 신청 후 영업일 1일 이내 회신.">
+<meta name="description" content="포터·봉고부터 특장차까지, 화물차 리스와 할부를 가장 낮은 조건으로 안내해 드립니다. 차량을 고르고 바로 견적을 받아보세요. 영업일 1일 이내 회신.">
 <link rel="stylesheet" href="assets/style.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
-  /* ===== HERO ===== */
-  .hero {
-    background:
-      radial-gradient(900px 420px at 88% 8%, rgba(201,168,76,.16), transparent 60%),
-      linear-gradient(180deg, #0A1628 0%, #101F36 100%);
-    color: #fff; padding: 92px 0 84px;
-  }
-  .hero .tagline {
-    display: inline-block; padding: 7px 15px; border-radius: 100px;
-    background: rgba(201,168,76,.13); border: 1px solid rgba(201,168,76,.35);
-    color: #C9A84C; font-size: 12.5px; font-weight: 700; margin-bottom: 22px;
-  }
-  .hero h1 {
-    font-size: 44px; font-weight: 800; line-height: 1.28;
-    letter-spacing: -.03em; margin-bottom: 20px; word-break: keep-all;
-  }
-  .hero h1 em { color: #C9A84C; font-style: normal; }
-  .hero .lead {
-    font-size: 16.5px; color: #A9B4C6; line-height: 1.85;
-    margin-bottom: 34px; max-width: 560px; word-break: keep-all;
-  }
-  .hero-stats {
-    display: grid; grid-template-columns: repeat(3, auto); gap: 40px;
-    margin-top: 50px; padding-top: 30px;
-    border-top: 1px solid rgba(255,255,255,.1); justify-content: start;
-  }
-  .hero-stats .n { font-size: 27px; font-weight: 800; color: #C9A84C; letter-spacing: -.02em; }
-  .hero-stats .l { font-size: 12.5px; color: #8A97AB; margin-top: 5px; }
-  @media (max-width: 760px) {
-    .hero { padding: 60px 0 56px; }
-    .hero h1 { font-size: 30px; }
-    .hero .lead { font-size: 15px; }
-    .hero-stats { grid-template-columns: repeat(3, 1fr); gap: 14px; margin-top: 36px; }
-    .hero-stats .n { font-size: 20px; }
-    .hero-stats .l { font-size: 11.5px; }
-  }
-
-  /* ===== 상품 카드 ===== */
+  /* 상품 카드 — 홈에서는 요약만 */
   .prod { display: block; position: relative; overflow: hidden; }
   .prod .tag {
     display: inline-block; padding: 4px 11px; border-radius: 100px;
@@ -57,7 +21,7 @@
   }
   .prod .key span { color: #8A94A6; font-weight: 500; }
 
-  /* ===== 정비 배너 ===== */
+  /* 정비 배너 */
   .mnt-grid { display: grid; grid-template-columns: 1.05fr 1fr; gap: 44px; align-items: center; }
   @media (max-width: 860px) { .mnt-grid { grid-template-columns: 1fr; gap: 30px; } }
   .mnt-grid h2 { font-size: 27px; font-weight: 800; line-height: 1.35; margin-bottom: 16px; word-break: keep-all; }
@@ -74,106 +38,115 @@
   .mnt-item span { font-size: 13px; color: #8A97AB; line-height: 1.7; word-break: keep-all; }
   @media (max-width: 600px) { .mnt-grid h2 { font-size: 22px; } }
 
-  /* ===== 절차 ===== */
-  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; counter-reset: f; }
+  /* 절차 */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
   @media (max-width: 860px) { .flow { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .flow { grid-template-columns: 1fr; } }
   .flow-item {
     background: #fff; border: 1px solid #E5E8EE; border-radius: 14px;
-    padding: 26px 22px; position: relative;
+    padding: 24px 20px;
   }
   .flow-item .no {
-    width: 34px; height: 34px; border-radius: 9px; background: #C9A84C; color: #0A1628;
+    width: 32px; height: 32px; border-radius: 9px; background: #C9A84C; color: #0A1628;
     display: flex; align-items: center; justify-content: center;
-    font-size: 14px; font-weight: 800; margin-bottom: 15px;
+    font-size: 14px; font-weight: 800; margin-bottom: 14px;
   }
-  .flow-item h3 { font-size: 16px; font-weight: 800; color: #0A1628; margin-bottom: 8px; }
-  .flow-item p { font-size: 13.5px; color: #6B7280; line-height: 1.75; word-break: keep-all; }
+  .flow-item h3 { font-size: 15.5px; font-weight: 800; color: #0A1628; margin-bottom: 7px; }
+  .flow-item p { font-size: 13px; color: #6B7280; line-height: 1.7; word-break: keep-all; }
 </style>
 </head>
-<body>
+<body class="has-bar">
 
 <header class="site-header">
   <div class="wrap hd">
     <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 리스 · 할부</span></a>
     <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
     <nav class="gnb">
-      <a href="about.html">회사소개</a>
       <a href="products.html">상품안내</a>
+      <a href="about.html">회사소개</a>
       <a href="board.html">게시판</a>
       <a href="contact.html">문의하기</a>
-      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      <a class="hd-cta" href="quote.html">견적요청하기</a>
     </nav>
   </div>
 </header>
 
-<!-- ===== HERO ===== -->
-<section class="hero">
-  <div class="wrap">
-    <span class="tagline">포터 · 봉고부터 특장차까지</span>
-    <h1>화물차 리스와 할부,<br><em>조건부터 비교</em>하고 결정하세요</h1>
-    <p class="lead">
-      운용리스 · 금융리스 · 할부를 한자리에서 비교해 드립니다.
-      차량과 조건만 선택하시면 영업일 1일 이내에 맞춤 견적서를 이메일로 보내드립니다.
-    </p>
-    <div class="btn-row">
-      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">1분 견적요청하기</a>
-      <a class="btn btn-line" href="products.html">상품 먼저 둘러보기</a>
+<!-- ===== 히어로 슬라이더 ===== -->
+<section class="hero-slider" aria-label="주요 안내">
+  <div class="hero-track" id="heroTrack">
+
+    <div class="hero-slide">
+      <div class="wrap inner">
+        <span class="tagline">포터 · 봉고부터 특장차까지</span>
+        <h2>화물차 리스와 할부,<br><em>조건부터 비교</em>하고 결정하세요</h2>
+        <p>운용리스 · 금융리스 · 할부를 같은 조건으로 나란히 계산해 드립니다. 차량과 조건만 고르시면 영업일 1일 이내에 견적서를 보내드립니다.</p>
+        <div class="btn-row"><a class="btn btn-gold" href="#picker">내 차 골라보기</a></div>
+      </div>
     </div>
-    <div class="hero-stats">
-      <div><div class="n">1<span style="font-size:15px">일 이내</span></div><div class="l">견적 회신</div></div>
-      <div><div class="n">12~60<span style="font-size:15px">개월</span></div><div class="l">계약 기간</div></div>
-      <div><div class="n">24<span style="font-size:15px">시간</span></div><div class="l">온라인 접수</div></div>
+
+    <div class="hero-slide">
+      <div class="wrap inner">
+        <span class="tagline">Maintenance</span>
+        <h2>정비비까지<br><em>월 납입금 하나로</em></h2>
+        <p>화물차는 주행거리가 길어 소모품 교체 주기가 빠릅니다. 엔진오일부터 타이어까지 정해진 범위의 정비를 월 납입금에 포함할 수 있습니다.</p>
+        <div class="btn-row"><a class="btn btn-gold" href="products.html#maintenance">정비포함 상품 보기</a></div>
+      </div>
     </div>
+
+    <div class="hero-slide">
+      <div class="wrap inner">
+        <span class="tagline">중고 화물차 리스</span>
+        <h2>출고 대기 없이<br><em>바로 운행</em>하고 싶다면</h2>
+        <p>중고 화물차도 리스로 진행하실 수 있습니다. 원하시는 차종과 필요 시기를 남겨주시면 차량을 확인해 견적을 보내드립니다.</p>
+        <div class="btn-row"><a class="btn btn-gold" href="quote.html">중고차 견적 요청</a></div>
+      </div>
+    </div>
+
+  </div>
+  <div class="hero-nav">
+    <button type="button" id="heroPrev" aria-label="이전">‹</button>
+    <span class="count"><b id="heroNow">1</b> / 3</span>
+    <button type="button" id="heroNext" aria-label="다음">›</button>
   </div>
 </section>
 
-<!-- ===== 홍보영상 ===== -->
-<section class="sec">
+<!-- ===== 내 차 선택하기 ===== -->
+<section class="picker" id="picker">
   <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Video</p>
-      <h2>40초면 이해되는 화물차 리스</h2>
-      <p>리스와 할부, 무엇이 어떻게 다른지 짧게 정리했습니다.</p>
+
+    <div class="picker-head">
+      <h2>내 차 선택하기</h2>
+      <div class="picker-search">
+        <input type="search" id="carSearch" placeholder="차량명을 검색해 보세요 ex)포터, 봉고, 탑차" aria-label="차량 검색">
+        <span class="ico" aria-hidden="true">🔍</span>
+      </div>
     </div>
-    <div class="video-wrap">
-      <video controls playsinline preload="metadata"
-             poster="assets/video/mytruck-poster.jpg"
-             title="Mytruck 화물차 리스·할부 안내 영상">
-        <source src="assets/video/mytruck.mp4" type="video/mp4">
-        이 브라우저는 영상 재생을 지원하지 않습니다.
-        <a href="assets/video/mytruck.mp4">영상 내려받기</a>
-      </video>
+
+    <div class="tabs" id="carTabs" role="tablist"></div>
+    <div class="brands" id="carBrands"></div>
+
+    <div class="car-grid" id="carGrid"></div>
+    <div class="car-more" id="carMore" style="display:none">
+      <button type="button" id="carMoreBtn">차량 더보기</button>
     </div>
-    <p class="video-note">소리를 켜고 보시면 더 잘 들립니다 · 40초</p>
+
   </div>
 </section>
 
-<!-- ===== 강점 ===== -->
-<section class="sec tint">
-  <div class="wrap">
-    <div class="sec-head">
-      <p class="eyebrow">Why Mytruck</p>
-      <h2>화물차만 다룹니다</h2>
-      <p>승용차와 화물차는 계약 구조도, 심사 기준도, 정비 항목도 다릅니다.<br>화물차 한 분야만 보기 때문에 조건을 더 정확하게 맞춰 드릴 수 있습니다.</p>
+<!-- ===== 빠른 상담신청 ===== -->
+<section class="quick">
+  <div class="wrap quick-in">
+    <div class="quick-txt">
+      <h2>전문 매니저와 <em>바로 상담</em>하고 싶다면</h2>
+      <p>연락처만 남겨주시면 확인 후 연락드립니다. 계약을 원하실 때만 진행합니다.</p>
     </div>
-    <div class="grid g3">
-      <div class="card">
-        <div class="ico">01</div>
-        <h3>전 차종 · 특장 포함</h3>
-        <p>포터 · 봉고 카고부터 내장탑차, 냉동탑차, 윙바디, 파워게이트, 덤프까지. 특장 비용도 월 납입금에 함께 넣어 초기 부담을 낮출 수 있습니다.</p>
-      </div>
-      <div class="card">
-        <div class="ico">02</div>
-        <h3>세 가지 상품 비교</h3>
-        <p>운용리스 · 금융리스 · 할부를 같은 조건으로 나란히 계산해 드립니다. 사업자 형태와 절세 방향에 따라 유리한 쪽이 달라집니다.</p>
-      </div>
-      <div class="card">
-        <div class="ico">03</div>
-        <h3>정비포함 상품 운영</h3>
-        <p>소모품과 정기점검을 월 납입금에 포함하는 정비포함형을 함께 안내합니다. 예상치 못한 정비비 지출을 매달 고정비로 바꿀 수 있습니다.</p>
-      </div>
-    </div>
+    <form class="quick-form" id="quickForm" novalidate>
+      <input type="text" id="q-name" placeholder="이름" autocomplete="name" required>
+      <input type="tel" id="q-phone" placeholder="연락처" inputmode="numeric" autocomplete="tel" required
+             oninput="fmtPhone(this)">
+      <input type="text" id="mt-hp" tabindex="-1" autocomplete="off"
+             style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" aria-hidden="true">
+      <button type="submit">빠른 상담신청</button>
+    </form>
   </div>
 </section>
 
@@ -189,28 +162,28 @@
       <a class="card prod" href="products.html#operating">
         <span class="tag">경비처리 유리</span>
         <h3>운용리스</h3>
-        <p>차량 소유권은 리스사에 있고, 매달 납입하는 리스료 전액을 비용으로 처리할 수 있습니다. 만기에는 반납 · 연장 · 인수 중 선택합니다.</p>
+        <p>차량 소유권은 리스사에 있고, 매달 납입하는 리스료 전액을 비용으로 처리할 수 있습니다.</p>
         <div class="key">부채비율 영향 없음 <span>· 자산 미계상</span></div>
         <span class="more">자세히 보기 →</span>
       </a>
       <a class="card prod" href="products.html#finance">
         <span class="tag">소유권 이전</span>
         <h3>금융리스</h3>
-        <p>차량을 자산으로 등록하고 감가상각과 이자비용을 처리합니다. 계약 만기 시 소유권이 고객에게 이전됩니다.</p>
+        <p>차량을 자산으로 등록하고 감가상각과 이자비용을 처리합니다. 만기 시 소유권이 이전됩니다.</p>
         <div class="key">자산 계상 <span>· 감가상각 + 이자</span></div>
         <span class="more">자세히 보기 →</span>
       </a>
       <a class="card prod" href="products.html#installment">
         <span class="tag">처음부터 내 명의</span>
         <h3>할부</h3>
-        <p>출고 시점부터 차량이 본인 명의가 됩니다. 원금과 이자를 나누어 납입하며, 완납 후 별도 절차가 없습니다.</p>
+        <p>출고 시점부터 차량이 본인 명의가 됩니다. 원금과 이자를 나누어 납입합니다.</p>
         <div class="key">즉시 소유 <span>· 원금 + 이자 분할</span></div>
         <span class="more">자세히 보기 →</span>
       </a>
       <a class="card prod" href="products.html#used">
         <span class="tag">출고 대기 없음</span>
         <h3>중고차 리스</h3>
-        <p>중고 화물차도 리스로 진행하실 수 있습니다. 원하시는 차종과 필요 시기를 주시면 차량을 확인해 견적을 보내드립니다.</p>
+        <p>중고 화물차도 리스로 진행하실 수 있습니다. 차종과 필요 시기를 주시면 확인해 드립니다.</p>
         <div class="key">리스 전용 <span>· 정비 서비스 미포함</span></div>
         <span class="more">자세히 보기 →</span>
       </a>
@@ -271,7 +244,7 @@
       <div class="flow-item">
         <div class="no">2</div>
         <h3>견적서 발송</h3>
-        <p>영업일 1일 이내에 조건별 월 납입금을 정리한 견적서를 이메일로 보내드립니다.</p>
+        <p>영업일 1일 이내에 조건별 월 납입금을 정리해 이메일로 보내드립니다.</p>
       </div>
       <div class="flow-item">
         <div class="no">3</div>
@@ -287,13 +260,34 @@
   </div>
 </section>
 
+<!-- ===== 홍보영상 ===== -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Video</p>
+      <h2>40초면 이해되는 화물차 리스</h2>
+      <p>리스와 할부, 무엇이 어떻게 다른지 짧게 정리했습니다.</p>
+    </div>
+    <div class="video-wrap">
+      <video controls playsinline preload="none"
+             poster="assets/video/mytruck-poster.jpg"
+             title="Mytruck 화물차 리스·할부 안내 영상">
+        <source src="assets/video/mytruck.mp4" type="video/mp4">
+        이 브라우저는 영상 재생을 지원하지 않습니다.
+        <a href="assets/video/mytruck.mp4">영상 내려받기</a>
+      </video>
+    </div>
+    <p class="video-note">소리를 켜고 보시면 더 잘 들립니다 · 40초</p>
+  </div>
+</section>
+
 <!-- ===== CTA ===== -->
 <section class="cta-band">
   <div class="wrap">
     <h2>지금 <em>무료 견적</em>을 받아보세요</h2>
     <p>차량과 조건만 선택하시면 됩니다. 계약을 원하실 때만 연락드립니다.</p>
     <div class="btn-row center">
-      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      <a class="btn btn-gold" href="quote.html">견적요청하기</a>
       <a class="btn btn-line" href="contact.html">먼저 문의하기</a>
     </div>
   </div>
@@ -311,7 +305,7 @@
         <a href="products.html">상품안내</a>
         <a href="board.html">게시판</a>
         <a href="contact.html">문의하기</a>
-        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+        <a href="quote.html">견적요청하기</a>
       </nav>
     </div>
     <div class="ft-info">
@@ -322,6 +316,204 @@
   </div>
 </footer>
 
+<!-- 모바일 하단 고정 -->
+<div class="mobile-bar">
+  <a class="tel" href="tel:0269250516">전화 상담</a>
+  <a class="cta" href="quote.html">견적요청하기</a>
+</div>
+
+<div class="loading" id="loading"><div class="spinner"></div><p>접수 중입니다</p></div>
+<div class="toast" id="toast"></div>
+
+<script src="truck-data.js"></script>
+<script src="assets/catalog.js"></script>
 <script src="assets/site.js"></script>
+<script>
+/* ================================================
+   히어로 슬라이더
+   ================================================ */
+(function () {
+  var track = document.getElementById('heroTrack');
+  if (!track) return;
+  var total = track.children.length, i = 0, timer = null;
+
+  function go(n) {
+    i = (n + total) % total;
+    track.style.transform = 'translateX(-' + (i * 100) + '%)';
+    document.getElementById('heroNow').textContent = i + 1;
+  }
+  function play()  { stop(); timer = setInterval(function () { go(i + 1); }, 6000); }
+  function stop()  { if (timer) clearInterval(timer); }
+
+  document.getElementById('heroPrev').addEventListener('click', function () { go(i - 1); play(); });
+  document.getElementById('heroNext').addEventListener('click', function () { go(i + 1); play(); });
+
+  // 탭을 벗어나 있을 때는 굳이 돌리지 않는다
+  document.addEventListener('visibilitychange', function () { document.hidden ? stop() : play(); });
+  play();
+})();
+
+/* ================================================
+   내 차 선택하기
+   ================================================ */
+(function () {
+  var ALL = buildCatalog();
+  var PAGE = 8;                       // 한 번에 보여줄 카드 수
+  var state = { tab: 'all', brand: '전체', q: '', shown: PAGE };
+
+  var elGrid   = document.getElementById('carGrid');
+  var elTabs   = document.getElementById('carTabs');
+  var elBrands = document.getElementById('carBrands');
+  var elMore   = document.getElementById('carMore');
+
+  /* 사진이 아직 없는 차량에 들어갈 트럭 실루엣 */
+  var PLACEHOLDER =
+    'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 70" fill="none" stroke="#0A1628" stroke-width="3">' +
+      '<path d="M4 50V22h52v28M56 32h20l14 14v4M4 50h12M32 50h32M84 50h12"/>' +
+      '<circle cx="24" cy="52" r="8"/><circle cx="76" cy="52" r="8"/></svg>');
+
+  function matches(v) {
+    if (state.tab !== 'all' && v.tab !== state.tab) return false;
+    if (state.brand !== '전체' && v.brand !== state.brand) return false;
+    if (state.q) {
+      var hay = (v.brand + v.name + v.sub + v.tags.join('')).replace(/\s/g, '').toLowerCase();
+      if (hay.indexOf(state.q) === -1) return false;
+    }
+    return true;
+  }
+
+  function cardHTML(v) {
+    var badge = v.badge
+      ? '<span class="badge ' + v.badge.tone + '">' + v.badge.text + '</span>' : '';
+    return '' +
+      '<a class="car" href="' + quoteUrl(v) + '">' +
+        '<div class="car-img">' + badge +
+          '<img src="' + v.img + '" alt="' + v.name + '" loading="lazy" ' +
+               'onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\';this.className=\'ph\'">' +
+        '</div>' +
+        '<div class="car-body">' +
+          '<div class="brand">' + v.brand + '</div>' +
+          '<h3>' + v.name + '</h3>' +
+          '<div class="tags">' + v.tags.join(' ') + '</div>' +
+          '<div class="car-price">' +
+            '<div class="lbl">차량가</div>' +
+            '<div class="val">' + manwon(v.price) + '원<span>부터</span></div>' +
+          '</div>' +
+          '<span class="car-cta">견적내기</span>' +
+        '</div>' +
+      '</a>';
+  }
+
+  function render() {
+    var list = ALL.filter(matches);
+
+    if (!list.length) {
+      elGrid.innerHTML = '<p class="car-none">조건에 맞는 차량이 없습니다.<br>다른 탭이나 검색어로 찾아보세요.</p>';
+      elMore.style.display = 'none';
+    } else {
+      elGrid.innerHTML = list.slice(0, state.shown).map(cardHTML).join('');
+      elMore.style.display = list.length > state.shown ? 'block' : 'none';
+      document.getElementById('carMoreBtn').textContent =
+        '차량 더보기 (' + (list.length - state.shown) + '대)';
+    }
+
+    // 탭 옆 숫자는 지금 브랜드·검색어 기준으로 다시 센다
+    Array.prototype.forEach.call(elTabs.children, function (btn) {
+      var key = btn.dataset.k;
+      var saved = state.tab; state.tab = key;
+      var n = ALL.filter(matches).length;
+      state.tab = saved;
+      btn.querySelector('.n').textContent = n;
+      btn.classList.toggle('on', key === state.tab);
+    });
+    Array.prototype.forEach.call(elBrands.children, function (btn) {
+      btn.classList.toggle('on', btn.dataset.b === state.brand);
+    });
+  }
+
+  /* 탭 */
+  elTabs.innerHTML = CAT_TABS.map(function (t) {
+    return '<button type="button" role="tab" data-k="' + t.key + '">' +
+           t.label + '<span class="n"></span></button>';
+  }).join('');
+  elTabs.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    state.tab = b.dataset.k; state.shown = PAGE; render();
+  });
+
+  /* 브랜드 */
+  var brands = ['전체'].concat(Object.keys(TRUCK_DATA));
+  elBrands.innerHTML = brands.map(function (b) {
+    return '<button type="button" data-b="' + b + '">' + b + '</button>';
+  }).join('');
+  elBrands.addEventListener('click', function (e) {
+    var b = e.target.closest('button'); if (!b) return;
+    state.brand = b.dataset.b; state.shown = PAGE; render();
+  });
+
+  /* 검색 */
+  document.getElementById('carSearch').addEventListener('input', function (e) {
+    state.q = e.target.value.replace(/\s/g, '').toLowerCase();
+    state.shown = PAGE; render();
+  });
+
+  /* 더보기 */
+  document.getElementById('carMoreBtn').addEventListener('click', function () {
+    state.shown += PAGE; render();
+  });
+
+  render();
+})();
+
+/* ================================================
+   빠른 상담신청
+   ================================================ */
+(function () {
+  var form = document.getElementById('quickForm');
+  if (!form || typeof emailjs === 'undefined') return;
+
+  emailjs.init("5-wSho3g1I9sELOfE");
+  var SERVICE  = "service_1tfrm9f";
+  var TEMPLATE = "template_tiosvos";
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var name  = document.getElementById('q-name').value.trim();
+    var phone = document.getElementById('q-phone').value.trim();
+
+    if (!name)  { showToast('이름을 입력해 주세요.'); return; }
+    if (phone.replace(/\D/g, '').length < 10) { showToast('연락처를 정확히 입력해 주세요.'); return; }
+
+    var detail =
+      '── 빠른 상담신청 ──\n' +
+      '이름       : ' + name + '\n' +
+      '연락처     : ' + phone + '\n' +
+      '유입경로   : ' + mtSourceLabel() + '\n' +
+      '신청위치   : 홈 빠른상담';
+
+    document.getElementById('loading').classList.add('show');
+    try {
+      mtSaveLead({ form: 'quick', name: name, phone: phone, category: '빠른상담' });
+      await emailjs.send(SERVICE, TEMPLATE, {
+        customer_name:  name,
+        customer_email: '-',
+        customer_phone: phone,
+        car_full:       '빠른 상담신청',
+        lead_source:    mtSourceLabel(),
+        quote_detail:   detail,
+        message:        detail,
+        contact:        phone
+      });
+      form.reset();
+      showToast('접수되었습니다. 확인 후 연락드리겠습니다.', true);
+    } catch (err) {
+      showToast('전송에 실패했습니다. 02-6925-0516 으로 연락 주세요.');
+    } finally {
+      document.getElementById('loading').classList.remove('show');
+    }
+  });
+})();
+</script>
 </body>
 </html>

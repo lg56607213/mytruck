@@ -244,6 +244,209 @@ ul.dot li b { color: #0A1628; }
 @keyframes spin { to { transform: rotate(360deg); } }
 .loading p { font-size: 14px; color: #6B7280; font-weight: 500; }
 
+/* ================================================
+   홈 — 히어로 슬라이더
+   ================================================ */
+.hero-slider { position: relative; background: #0A1628; overflow: hidden; }
+.hero-track { display: flex; transition: transform .5s cubic-bezier(.4,0,.2,1); }
+.hero-slide { min-width: 100%; }
+.hero-slide .inner {
+  min-height: 380px; display: flex; flex-direction: column; justify-content: center;
+  padding: 56px 0; color: #fff;
+}
+.hero-slide .tagline {
+  display: inline-block; align-self: flex-start;
+  padding: 6px 14px; border-radius: 100px;
+  background: rgba(201,168,76,.14); border: 1px solid rgba(201,168,76,.38);
+  color: #C9A84C; font-size: 12.5px; font-weight: 700; margin-bottom: 18px;
+}
+.hero-slide h2 {
+  font-size: 40px; font-weight: 800; line-height: 1.26;
+  letter-spacing: -.03em; margin-bottom: 16px; word-break: keep-all; max-width: 640px;
+}
+.hero-slide h2 em { color: #C9A84C; font-style: normal; }
+.hero-slide p {
+  font-size: 16px; color: #A9B4C6; line-height: 1.8;
+  margin-bottom: 28px; max-width: 520px; word-break: keep-all;
+}
+.hero-nav {
+  position: absolute; right: 50%; bottom: 26px; transform: translateX(560px);
+  display: flex; align-items: center; gap: 4px;
+  background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.16);
+  border-radius: 100px; padding: 5px 8px; backdrop-filter: blur(6px);
+}
+.hero-nav button {
+  width: 28px; height: 28px; border: 0; border-radius: 50%;
+  background: none; color: #fff; cursor: pointer;
+  font-size: 15px; line-height: 1; font-family: inherit;
+}
+.hero-nav button:hover { background: rgba(255,255,255,.16); }
+.hero-nav .count { font-size: 12.5px; color: #C7CFDC; font-weight: 700; min-width: 38px; text-align: center; }
+.hero-nav .count b { color: #fff; }
+@media (max-width: 1220px) { .hero-nav { right: 20px; transform: none; } }
+@media (max-width: 760px) {
+  .hero-slide .inner { min-height: 300px; padding: 44px 0 66px; }
+  .hero-slide h2 { font-size: 27px; }
+  .hero-slide p { font-size: 14.5px; margin-bottom: 22px; }
+  .hero-nav { bottom: 16px; }
+}
+
+/* ================================================
+   홈 — 내 차 선택하기
+   ================================================ */
+.picker { background: #F5F6F8; padding: 56px 0 72px; }
+.picker-head {
+  display: flex; align-items: center; gap: 20px;
+  flex-wrap: wrap; margin-bottom: 22px;
+}
+.picker-head h2 {
+  font-size: 27px; font-weight: 800; color: #0A1628;
+  letter-spacing: -.02em; white-space: nowrap;
+}
+.picker-search { margin-left: auto; position: relative; width: 280px; max-width: 100%; }
+.picker-search input {
+  width: 100%; padding: 12px 42px 12px 16px;
+  border: 1px solid #D6DAE2; border-radius: 100px;
+  font-size: 14px; font-family: inherit; color: #1A1A2E;
+  background: #fff; outline: none; transition: border .15s, box-shadow .15s;
+}
+.picker-search input:focus { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
+.picker-search input::placeholder { color: #B6BCC7; }
+.picker-search .ico { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: #8A94A6; pointer-events: none; }
+@media (max-width: 700px) {
+  .picker-head h2 { font-size: 22px; }
+  .picker-search { margin-left: 0; width: 100%; }
+}
+
+/* 탭 */
+.tabs { display: flex; gap: 6px; background: #fff; border: 1px solid #E5E8EE; border-radius: 12px; padding: 5px; }
+.tabs button {
+  flex: 1; padding: 12px 10px; border: 0; border-radius: 8px;
+  background: none; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 700; color: #6B7280;
+  transition: background .15s, color .15s;
+}
+.tabs button:hover { color: #0A1628; }
+.tabs button.on { background: #0A1628; color: #fff; }
+.tabs button .n { font-size: 12px; font-weight: 600; opacity: .65; margin-left: 4px; }
+
+/* 브랜드 */
+.brands { display: flex; gap: 8px; flex-wrap: wrap; margin: 14px 0 22px; }
+.brands button {
+  padding: 9px 18px; border: 1px solid #DDE1E8; border-radius: 100px;
+  background: #fff; cursor: pointer;
+  font-family: inherit; font-size: 13.5px; font-weight: 700; color: #4B5563;
+  transition: .15s;
+}
+.brands button:hover { border-color: #C9A84C; color: #0A1628; }
+.brands button.on { background: #C9A84C; border-color: #C9A84C; color: #0A1628; }
+
+/* 차량 카드 */
+.car-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 1000px) { .car-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 760px)  { .car-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; } }
+
+.car {
+  display: flex; flex-direction: column;
+  background: #fff; border: 1px solid #E5E8EE; border-radius: 14px;
+  overflow: hidden; transition: border-color .15s, box-shadow .15s, transform .15s;
+}
+.car:hover { border-color: #C9A84C; box-shadow: 0 10px 30px rgba(10,22,40,.10); transform: translateY(-2px); }
+.car-img {
+  position: relative; aspect-ratio: 4 / 3; background: #EEF1F5;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.car-img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+.car-img .ph { width: 62%; opacity: .3; }
+.badge {
+  position: absolute; top: 10px; left: 10px; z-index: 1;
+  padding: 4px 10px; border-radius: 5px;
+  font-size: 11px; font-weight: 800; letter-spacing: -.01em;
+  background: #0A1628; color: #fff;
+}
+.badge.ev      { background: #1C7A4A; }
+.badge.special { background: #B07D20; }
+.badge.plain   { background: #4B5563; }
+
+.car-body { padding: 14px 15px 16px; display: flex; flex-direction: column; flex: 1; }
+.car-body .brand { font-size: 11.5px; font-weight: 700; color: #8A94A6; margin-bottom: 5px; }
+.car-body h3 {
+  font-size: 15px; font-weight: 800; color: #0A1628;
+  line-height: 1.4; word-break: keep-all; margin-bottom: 8px;
+}
+.car-body .tags { font-size: 11.5px; color: #9AA0AC; line-height: 1.6; margin-bottom: 12px; }
+.car-price { margin-top: auto; padding-top: 11px; border-top: 1px dashed #E5E8EE; }
+.car-price .lbl { font-size: 11.5px; color: #8A94A6; }
+.car-price .val { font-size: 17px; font-weight: 800; color: #0A1628; letter-spacing: -.02em; }
+.car-price .val span { font-size: 12.5px; font-weight: 700; color: #6B7280; }
+.car-cta {
+  display: block; margin-top: 12px; padding: 11px; border-radius: 8px;
+  background: #FDF6E6; color: #8A6714; border: 1px solid #F0E3BF;
+  text-align: center; font-size: 13.5px; font-weight: 800;
+  transition: .15s;
+}
+.car:hover .car-cta { background: #C9A84C; border-color: #C9A84C; color: #0A1628; }
+
+.car-none { grid-column: 1 / -1; text-align: center; padding: 56px 20px; color: #8A94A6; font-size: 14.5px; }
+.car-more { text-align: center; margin-top: 26px; }
+.car-more button {
+  padding: 14px 40px; border: 1px solid #CBD2DC; border-radius: 100px;
+  background: #fff; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 700; color: #374151;
+  transition: .15s;
+}
+.car-more button:hover { border-color: #C9A84C; color: #0A1628; }
+
+/* ================================================
+   홈 — 빠른 상담신청
+   ================================================ */
+.quick { background: #0A1628; color: #fff; padding: 40px 0; }
+.quick-in { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; }
+.quick-txt { flex: 1; min-width: 240px; }
+.quick-txt h2 { font-size: 22px; font-weight: 800; margin-bottom: 7px; word-break: keep-all; }
+.quick-txt h2 em { color: #C9A84C; font-style: normal; }
+.quick-txt p { font-size: 14px; color: #A9B4C6; line-height: 1.7; word-break: keep-all; }
+.quick-form { display: flex; gap: 9px; flex-wrap: wrap; }
+.quick-form input {
+  padding: 14px 16px; border: 1px solid rgba(255,255,255,.2); border-radius: 9px;
+  background: rgba(255,255,255,.07); color: #fff;
+  font-size: 14.5px; font-family: inherit; outline: none; width: 160px;
+  transition: border .15s, background .15s;
+}
+.quick-form input::placeholder { color: #7C899E; }
+.quick-form input:focus { border-color: #C9A84C; background: rgba(255,255,255,.11); }
+.quick-form button {
+  padding: 14px 26px; border: 0; border-radius: 9px;
+  background: #C9A84C; color: #0A1628; cursor: pointer;
+  font-family: inherit; font-size: 14.5px; font-weight: 800; white-space: nowrap;
+}
+.quick-form button:hover { background: #D9BC66; }
+@media (max-width: 860px) {
+  .quick-form { width: 100%; }
+  .quick-form input { flex: 1; width: auto; min-width: 120px; }
+  .quick-form button { width: 100%; }
+}
+
+/* ================================================
+   모바일 하단 고정 바
+   ================================================ */
+.mobile-bar { display: none; }
+@media (max-width: 760px) {
+  .mobile-bar {
+    display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 200;
+    background: #fff; border-top: 1px solid #E5E8EE;
+    padding: 9px 12px calc(9px + env(safe-area-inset-bottom)); gap: 9px;
+    box-shadow: 0 -4px 20px rgba(10,22,40,.10);
+  }
+  .mobile-bar a {
+    flex: 1; padding: 14px; border-radius: 9px; text-align: center;
+    font-size: 14.5px; font-weight: 800;
+  }
+  .mobile-bar .tel  { background: #F1F3F6; color: #0A1628; flex: 0 0 42%; }
+  .mobile-bar .cta  { background: #C9A84C; color: #0A1628; }
+  body.has-bar { padding-bottom: 76px; }
+}
+
 /* ===== 홍보영상 ===== */
 .video-wrap {
   max-width: 880px; margin: 0 auto;

@@ -1278,6 +1278,40 @@ function showToast(msg) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove("show"), 3000);
 }
+
+/* ================================================
+   홈에서 고른 차량 이어받기
+   ------------------------------------------------
+   홈 화면의 차량 카드는 quote.html?brand=..&cat=..&model=..&body=.. 로 넘어온다.
+   위에서 만들어 둔 선택지를 순서대로 눌러 1단계를 채워 놓는다.
+   값이 없거나 이름이 안 맞으면 조용히 멈춘다 — 평소처럼 직접 고르면 된다.
+   (차량 데이터는 엑셀에서 다시 생성되므로 이름이 바뀔 수 있다)
+   ================================================ */
+(function prefillFromUrl() {
+  const q = new URLSearchParams(location.search);
+  if (!q.get("brand")) return;
+
+  const press = (grpId, text) => {
+    if (!text) return false;
+    const chip = Array.from(document.getElementById(grpId).children)
+      .find(c => c.textContent === text);
+    if (!chip) return false;
+    chip.click();      // 사용자가 직접 누른 것과 같은 경로를 탄다
+    return true;
+  };
+
+  if (!press("brand-grp", q.get("brand"))) return;
+  if (!press("cat-grp",   q.get("cat")))   return;
+  if (!press("model-grp", q.get("model"))) return;
+  if (!press("body-grp",  q.get("body")))  return;
+
+  // 트림만 고르면 되도록 그 자리로 데려간다
+  const trim = document.getElementById("trim-wrap");
+  if (trim) {
+    trim.scrollIntoView({ behavior: "smooth", block: "center" });
+    showToast("차량이 선택되었습니다. 트림을 골라주세요.");
+  }
+})();
 </script>
 </body>
 </html>
