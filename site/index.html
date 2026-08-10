@@ -373,6 +373,14 @@
       '<path d="M4 50V22h52v28M56 32h20l14 14v4M4 50h12M32 50h32M84 50h12"/>' +
       '<circle cx="24" cy="52" r="8"/><circle cx="76" cy="52" r="8"/></svg>');
 
+  /* 그 차 폴더에 photo.jpg 가 없으면 회색 트럭 그림을 보여준다.
+     사진을 넣는 대로 그 차부터 바뀐다. */
+  window.carImgFail = function (img) {
+    img.onerror = null;
+    img.src = PLACEHOLDER;
+    img.className = 'ph';
+  };
+
   function matches(v) {
     if (state.tab !== 'all' && v.tab !== state.tab) return false;
     if (state.brand !== '전체' && v.brand !== state.brand) return false;
@@ -390,7 +398,7 @@
       '<a class="car" href="' + quoteUrl(v) + '">' +
         '<div class="car-img">' + badge +
           '<img src="' + v.img + '" alt="' + v.name + '" loading="lazy" ' +
-               'onerror="this.onerror=null;this.src=\'' + PLACEHOLDER + '\';this.className=\'ph\'">' +
+               'onerror="carImgFail(this)">' +
         '</div>' +
         '<div class="car-body">' +
           '<div class="brand">' + v.brand + '</div>' +

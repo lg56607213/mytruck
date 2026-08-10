@@ -17,22 +17,25 @@ const CAT_TABS = [
   { key: "van",     label: "승합·승용" },
 ];
 
-/* ── 사진 파일 이름 (site/assets/cars/ 안) ──────
-   차량 1종당 사진 1장이면 충분하다. 세부사양별로 다른 사진을 쓰고 싶으면
-   IMG_BY_BODY 에 "차량명|세부사양" 으로 예외를 추가한다.        */
-const IMG_BY_MODEL = {
-  "포터II":          "porter2",
-  "포터II Electric": "porter2-ev",
-  "ST1":             "st1",
-  "스타리아":         "staria",
-  "스타리아 Hybrid":  "staria",
-  "봉고3 EV":        "bongo3-ev",
-  "PV5":             "pv5",
-  "레이":            "ray",
-};
-const IMG_BY_BODY = {
-  // 예) "포터II|내장탑차": "porter2-box",
-};
+/* ── 사진 ──────────────────────────────────────
+   차량 한 대당 폴더 하나. 그 안에 photo.jpg 를 넣으면 그 차 카드에 나온다.
+
+     site/assets/cars/포터II_냉동탑차/photo.jpg
+     site/assets/cars/포터II_윙바디/photo.jpg
+
+   폴더 이름은 카드에 보이는 차량명에서 만든다 (괄호·띄어쓰기는 _ 로).
+   차끼리 사진을 돌려 쓰거나 대신 찾아주는 동작은 없다.
+   그 차 폴더에 사진이 없으면 회색 트럭 그림이 나온다.
+
+   ※ 겉모습이 같은 차(스타리아 / 스타리아 Hybrid, 카고 2WD / 4WD 등)는
+     같은 사진 파일을 각 폴더에 하나씩 넣으면 된다.               */
+function carFolder(name) {
+  return name
+    .replace(/\(/g, "_").replace(/\)/g, "")   // 냉동탑차(킹캡) → 냉동탑차_킹캡
+    .replace(/\s+/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/_$/, "");
+}
 
 /* ── 분류 규칙 ────────────────────────────────
    위에서부터 먼저 걸리는 규칙을 따른다.                        */
@@ -128,8 +131,8 @@ function buildCatalog() {
           v.tab = classify(v);
           v.badge = badgeOf(v);
           v.tags = tagsOf(v);
-          v.img = "assets/cars/" +
-            (IMG_BY_BODY[model + "|" + body] || IMG_BY_MODEL[model] || "_default") + ".jpg";
+          v.folder = carFolder(v.name);
+          v.img = "assets/cars/" + encodeURIComponent(v.folder) + "/photo.jpg";
           out.push(v);
         }
       }
