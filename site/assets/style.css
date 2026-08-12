@@ -462,3 +462,27 @@ ul.dot li b { color: #0A1628; }
   max-width: 880px; margin: 16px auto 0;
   text-align: center; font-size: 13.5px; color: #8A94A6;
 }
+
+/* ===== 영업전화 없음 약속 ===== */
+.no-call { background: #C9A84C; padding: 18px 0; }
+.no-call-in {
+  display: flex; align-items: center; justify-content: center; gap: 16px;
+  text-align: left;
+}
+.no-call .nc-ico { font-size: 26px; flex-shrink: 0; line-height: 1; }
+.no-call .nc-txt { display: flex; flex-direction: column; gap: 4px; }
+.no-call .nc-txt b {
+  font-size: 17px; font-weight: 800; color: #0A1628; letter-spacing: -.02em;
+  word-break: keep-all;
+}
+.no-call .nc-txt b em { color: #7A2E2E; font-style: normal; }
+.no-call .nc-txt span {
+  font-size: 13.5px; color: #5A4A18; line-height: 1.65; word-break: keep-all;
+}
+@media (max-width: 640px) {
+  .no-call { padding: 18px 0; }
+  .no-call-in { gap: 12px; align-items: flex-start; }
+  .no-call .nc-ico { font-size: 22px; margin-top: 2px; }
+  .no-call .nc-txt b { font-size: 15px; }
+  .no-call .nc-txt span { font-size: 12.5px; }
+}
