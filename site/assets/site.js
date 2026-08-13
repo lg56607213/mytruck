@@ -183,3 +183,24 @@ function mtSaveLead(payload) {
     return Promise.resolve();
   }
 }
+
+/* ================================================
+   네이버 프리미엄 로그분석 — 전환 보고
+   ------------------------------------------------
+   폼 전송이 "성공한 순간"에만 부른다.
+   페이지 진입만으로 부르면 전환수가 부풀려져 판단이 망가진다.
+
+   type  1 = 회원가입  2 = 신청/상담  3 = 장바구니  4 = 구매  5 = 기타
+   화물차는 구매가 아니라 문의가 전환이므로 2 를 쓴다.
+   value 는 거래액이 없으므로 0.
+   ================================================ */
+function mtConversion(value) {
+  try {
+    if (!window.wcs) return;                 // 스크립트 차단·오프라인 대비
+    if (!window.wcs_add) window.wcs_add = {};
+    wcs_add["wa"] = "s_2ae8a1ab6bae";
+    var p = { type: "2", value: String(value == null ? 0 : value) };
+    if (window.wcs.trans) wcs.trans(p);
+    else if (window.wcs_trans) wcs_trans(p);
+  } catch (e) {}
+}

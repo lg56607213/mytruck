@@ -527,6 +527,7 @@
         contact:        phone
       });
       form.reset();
+      mtConversion(0);   // 네이버 전환 — 빠른 상담신청 완료
       showToast('접수되었습니다. 확인 후 연락드리겠습니다.', true);
     } catch (err) {
       showToast('전송에 실패했습니다. 02-6925-0516 으로 연락 주세요.');
@@ -535,6 +536,17 @@
     }
   });
 })();
+</script>
+<!-- 네이버 프리미엄 로그분석 (공통) -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if (!wcs_add) var wcs_add = {};
+wcs_add["wa"] = "s_2ae8a1ab6bae";
+if (!_nasa) var _nasa = {};
+if (window.wcs) {
+  wcs.inflow("mytruck.kr");
+  wcs_do();
+}
 </script>
 </body>
 </html>
