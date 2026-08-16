@@ -605,7 +605,7 @@
       <div class="step" id="s5">
         <p class="sec-eyebrow">Step 5</p>
         <p class="sec-title">견적서를 받아보세요</p>
-        <p class="sec-desc">입력하신 이메일로 맞춤 견적서를 보내드립니다</p>
+        <p class="sec-desc">이메일 주소만 있으면 됩니다. 전화번호는 남기지 않으셔도 됩니다</p>
 
         <div class="contact-box">
           <div>
@@ -618,13 +618,14 @@
             <input class="input-field" type="email" id="inp-email" placeholder="example@email.com">
           </div>
           <div>
-            <label class="flabel" for="inp-phone">연락처 <span class="sub">(선택)</span></label>
-            <input class="input-field" type="tel" id="inp-phone" placeholder="010-0000-0000"
+            <label class="flabel" for="inp-phone">연락처 <span class="sub">(선택 · 비워두셔도 됩니다)</span></label>
+            <input class="input-field" type="tel" id="inp-phone" placeholder="입력하지 않으셔도 됩니다"
                    oninput="fmtPhone(this)" maxlength="13">
           </div>
           <p class="contact-hint">
-            입력하신 정보는 견적서 발송 목적으로만 사용됩니다.<br>
-            계약을 원하실 때만 유선 연락이 이루어집니다.
+            <strong>연락처를 비워두셔도 견적서는 그대로 발송됩니다.</strong><br>
+            저희가 먼저 전화드리는 일은 없습니다. 견적서는 이메일로만 보내드리고,<br>
+            계약을 원하실 때 먼저 연락 주시면 그때 진행합니다.
           </p>
         </div>
 
