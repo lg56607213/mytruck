@@ -199,8 +199,11 @@ function mtConversion(value) {
     if (!window.wcs) return;                 // 스크립트 차단·오프라인 대비
     if (!window.wcs_add) window.wcs_add = {};
     wcs_add["wa"] = "s_2ae8a1ab6bae";
-    var p = { type: "2", value: String(value == null ? 0 : value) };
-    if (window.wcs.trans) wcs.trans(p);
-    else if (window.wcs_trans) wcs_trans(p);
+    if (!window._nasa) window._nasa = {};
+
+    // 신청/상담 전환은 wcs.cnv 로 값을 만들어 wcs_do 에 넘겨야 집계된다.
+    // wcs.trans 는 장바구니·구매 전환용이라 {type, value} 를 전환으로 세지 않는다.
+    _nasa["cnv"] = wcs.cnv("2", String(value == null ? 0 : value));
+    wcs_do(_nasa);
   } catch (e) {}
 }
