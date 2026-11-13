@@ -208,13 +208,13 @@ ul.dot li b { color: #0A1628; }
 .field label { display: block; font-size: 13px; font-weight: 700; color: #374151; margin-bottom: 7px; }
 .field label .req { color: #B07D20; }
 .field .hint { font-size: 12px; color: #9AA0AC; margin-top: 6px; line-height: 1.6; }
-.inp, .sel, .txt {
+.inp, select.sel, .txt {   /* .sel 은 select 에만 — 견적 폼의 선택 표시(.chip.sel)와 이름이 겹친다 */
   width: 100%; padding: 13px 14px;
   border: 1px solid #D6DAE2; border-radius: 9px;
   font-size: 14.5px; font-family: inherit; color: #1A1A2E;
   background: #fff; outline: none; transition: border .15s, box-shadow .15s;
 }
-.inp:focus, .sel:focus, .txt:focus { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
+.inp:focus, select.sel:focus, .txt:focus { border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,.13); }
 .inp::placeholder, .txt::placeholder { color: #C4C8D0; }
 .txt { min-height: 150px; resize: vertical; line-height: 1.7; }
 .f2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }

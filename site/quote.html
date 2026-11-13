@@ -488,7 +488,7 @@
 
         <div class="frow">
           <span class="flabel">상품 종류</span>
-          <div class="card-grid three" id="product-grp">
+          <div class="card-grid" id="product-grp">
             <div class="sel-card" id="card-installment" onclick="selCard(this,'product-grp','product')">
               <div class="ct">할부</div>
               <div class="cs">처음부터 내 명의<br>원금 + 이자 분할 납부</div>
@@ -500,6 +500,10 @@
             <div class="sel-card" onclick="selCard(this,'product-grp','product')">
               <div class="ct">금융리스</div>
               <div class="cs">자산으로 등록<br>만기 시 소유권 이전</div>
+            </div>
+            <div class="sel-card" id="card-rent" onclick="selCard(this,'product-grp','product')">
+              <div class="ct">렌트(구독형)</div>
+              <div class="cs">보험 · 자동차세 포함<br>월 구독료 하나로 이용</div>
             </div>
           </div>
           <p class="contact-hint" id="used-product-note" style="display:none">
@@ -541,6 +545,11 @@
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">10%</div>
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">20%</div>
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">30%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'prepay-grp')">직접입력</div>
+            </div>
+            <div id="prepay-custom-wrap" style="display:none;margin-top:10px">
+              <input class="input-field" type="text" id="prepay-custom" maxlength="30"
+                     placeholder="예) 500만원 / 15%" oninput="customInput(this,'prepay')">
             </div>
           </div>
           <div class="frow">
@@ -550,6 +559,11 @@
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">10%</div>
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">20%</div>
               <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">30%</div>
+              <div class="chip" style="padding:9px 14px" onclick="selOne(this,'deposit-grp')">직접입력</div>
+            </div>
+            <div id="deposit-custom-wrap" style="display:none;margin-top:10px">
+              <input class="input-field" type="text" id="deposit-custom" maxlength="30"
+                     placeholder="예) 300만원 / 25%" oninput="customInput(this,'deposit')">
             </div>
           </div>
         </div>
@@ -570,8 +584,12 @@
             <div class="chip" onclick="selOne(this,'km-grp')">2만km</div>
             <div class="chip" onclick="selOne(this,'km-grp')">3만km</div>
             <div class="chip" onclick="selOne(this,'km-grp')">5만km</div>
-            <div class="chip" onclick="selOne(this,'km-grp')">7만km</div>
-            <div class="chip" onclick="selOne(this,'km-grp')">제한 없음</div>
+            <div class="chip" onclick="selOne(this,'km-grp')">직접입력</div>
+          </div>
+          <div id="km-custom-wrap" style="display:none;margin-top:10px">
+            <input class="input-field" type="text" id="km-custom" maxlength="30"
+                   placeholder="예) 4만km / 10만km" oninput="customInput(this,'km')">
+            <p class="contact-hint">연간 예상 주행거리를 직접 적어주세요.</p>
           </div>
         </div>
 
@@ -736,7 +754,7 @@ if (typeof emailjs !== "undefined") emailjs.init(EMAILJS_PUBLIC_KEY);
    ================================================ */
 const state = {
   custType: "",        // 개인 / 개인사업자 / 법인
-  product: "",         // 할부 / 운용리스 / 금융리스
+  product: "",         // 할부 / 운용리스 / 금융리스 / 렌트(구독형)
   usage: "",           // 영업용(노란색 번호판) / 자가용(흰색 번호판)
   brand: "", cat: "", model: "", body: "", trim: "",
   opts: [],            // [{n, p}]  제조사 옵션
@@ -745,6 +763,7 @@ const state = {
   ext: [],             // 외주 옵션 (추천 항목)
   extCustom: [],       // 외주 옵션 (직접 입력)
   prepay: "", deposit: "", period: "", periodCustom: false, km: "",
+  prepayCustom: false, depositCustom: false, kmCustom: false,   // '직접입력' 선택 여부
   insurance: "", maintenance: "",
 
   /* 중고차 (리스 전용) — 재고가 매일 바뀌어 가격표를 두지 않고 직접 입력받는다 */
@@ -995,7 +1014,23 @@ function selOne(el, grpId) {
     "prepay-grp": "prepay", "deposit-grp": "deposit", "period-grp": "period", "km-grp": "km",
     "usedcond-grp": "usedCond", "usedwhen-grp": "usedWhen"
   }[grpId];
-  if (key) state[key] = el.textContent.trim();
+  if (!key) return;
+  const name = el.textContent.trim();
+  state[key] = name;
+
+  // 선납금 · 보증금 · 주행거리의 '직접입력' — 입력칸을 열고 적은 글을 값으로 쓴다
+  const wrap = document.getElementById(key + "-custom-wrap");
+  if (!wrap) return;
+  const inp = document.getElementById(key + "-custom");
+  const custom = (name === "직접입력");
+  state[key + "Custom"] = custom;
+  wrap.style.display = custom ? "block" : "none";
+  if (custom) { state[key] = inp.value.trim(); inp.focus(); }
+  else inp.value = "";
+}
+
+function customInput(el, key) {
+  state[key] = el.value.trim();
 }
 
 function selCard(el, grpId, key) {
@@ -1078,12 +1113,15 @@ function checkStep(n) {
   if (n === 3) {
     if (!state.custType) return "고객 구분을 선택해 주세요";
     if (!state.product) return "상품 종류를 선택해 주세요";
-    if (state.isUsed && state.product === "할부") return "중고차는 리스로만 진행됩니다. 운용리스 또는 금융리스를 선택해 주세요";
+    if (state.isUsed && /할부|렌트/.test(state.product)) return "중고차는 리스로만 진행됩니다. 운용리스 또는 금융리스를 선택해 주세요";
     if (!state.usage) return "운영 방법을 선택해 주세요";
   }
   if (n === 4) {
+    if (state.prepayCustom && !state.prepay) return "원하시는 선납금을 입력해 주세요";
+    if (state.depositCustom && !state.deposit) return "원하시는 보증금을 입력해 주세요";
     if (!state.prepay || !state.deposit) return "선납금과 보증금을 선택해 주세요";
     if (state.periodCustom && !state.period) return "원하시는 계약 기간을 입력해 주세요";
+    if (state.kmCustom && !state.km) return "연간 주행거리를 입력해 주세요";
     if (!state.period || !state.km) return "계약기간과 주행거리를 선택해 주세요";
     if (!state.insurance) return "보험 가입 방식을 선택해 주세요";
     if (!state.isUsed && !state.maintenance) return "정비 서비스 여부를 선택해 주세요";
@@ -1124,14 +1162,16 @@ function render(n) {
     if (pl) pl.classList.toggle("done", i < n);
   }
   if (n === 3) {
-    // 중고차는 리스로만 진행한다 — 할부 카드를 감춘다
-    const inst = document.getElementById("card-installment");
-    inst.style.display = state.isUsed ? "none" : "block";
+    // 중고차는 리스로만 진행한다 — 할부 · 렌트 카드를 감춘다
+    ["card-installment", "card-rent"].forEach(id => {
+      const card = document.getElementById(id);
+      card.style.display = state.isUsed ? "none" : "block";
+      if (state.isUsed && card.classList.contains("sel")) {
+        state.product = "";
+        card.classList.remove("sel");
+      }
+    });
     document.getElementById("used-product-note").style.display = state.isUsed ? "block" : "none";
-    if (state.isUsed && state.product === "할부") {
-      state.product = "";
-      inst.classList.remove("sel");
-    }
   }
   if (n === 4) {
     renderPeriods();
