@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>특장 · 구조변경 | Mytruck</title>
+<meta name="naver-site-verification" content="ba15a35a7137718109d8a6f28fefdc6672f54ff2">
+<meta name="description" content="화물차 특장 리스, 구조변경 승인·등록, 원상복구 없는 반납 조건, 래핑·도색까지. Mytruck 이 장착업체와 금융사 사이에서 사양 확인부터 출고까지 한 창구로 진행합니다.">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+  .anchor-nav {
+    position: sticky; top: 64px; z-index: 50;
+    background: #fff; border-bottom: 1px solid #E5E8EE;
+  }
+  .anchor-nav .in { display: flex; gap: 4px; overflow-x: auto; padding: 11px 0; }
+  .anchor-nav a {
+    padding: 8px 15px; border-radius: 100px; white-space: nowrap;
+    font-size: 13.5px; font-weight: 700; color: #6B7280;
+    border: 1px solid #E5E8EE; transition: .15s;
+  }
+  .anchor-nav a:hover { border-color: #C9A84C; color: #0A1628; }
+  [id] { scroll-margin-top: 130px; }
+
+  /* 왜 어려운가 */
+  .pain { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .pain { grid-template-columns: 1fr; } }
+  .pain .card { padding: 26px 22px; }
+  .pain .q { font-size: 12px; font-weight: 800; color: #B07D20; letter-spacing: .06em; margin-bottom: 10px; }
+  .pain h3 { font-size: 17px; font-weight: 800; color: #0A1628; margin-bottom: 10px; letter-spacing: -.01em; word-break: keep-all; }
+  .pain p { font-size: 14px; color: #4B5563; line-height: 1.85; word-break: keep-all; }
+  .pain .a { margin-top: 14px; padding-top: 14px; border-top: 1px dashed #E5E8EE; font-size: 13.5px; color: #0A1628; font-weight: 700; line-height: 1.7; word-break: keep-all; }
+
+  /* 서비스 블록 */
+  .svc { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .svc + .svc { margin-top: 64px; padding-top: 60px; border-top: 1px solid #E5E8EE; }
+  @media (max-width: 860px) { .svc { grid-template-columns: 1fr; gap: 22px; } }
+  .svc .badge {
+    display: inline-block; padding: 6px 13px; border-radius: 100px; background: #0A1628; color: #C9A84C;
+    font-size: 12px; font-weight: 800; margin-bottom: 14px;
+  }
+  .svc h2 { font-size: 26px; font-weight: 800; color: #0A1628; letter-spacing: -.02em; line-height: 1.4; margin-bottom: 14px; word-break: keep-all; }
+  .svc h2 em { font-style: normal; color: #B07D20; }
+  .svc .desc { font-size: 15px; color: #4B5563; line-height: 1.95; word-break: keep-all; }
+  @media (max-width: 600px) { .svc h2 { font-size: 21px; } }
+  .ck-list { border: 1px solid #E5E8EE; border-radius: 14px; background: #fff; padding: 8px 22px; }
+  .ck-list li { list-style: none; display: flex; gap: 12px; padding: 15px 0; border-bottom: 1px solid #F0F2F5; font-size: 14px; color: #4B5563; line-height: 1.75; word-break: keep-all; }
+  .ck-list li:last-child { border-bottom: 0; }
+  .ck-list .ck { flex: none; width: 22px; height: 22px; border-radius: 50%; background: #FEFCF6; border: 1px solid #DCC894; color: #B07D20; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; margin-top: 2px; }
+  .ck-list b { display: block; color: #0A1628; font-size: 14.5px; margin-bottom: 2px; }
+
+  .note {
+    margin-top: 22px; padding: 17px 20px; border-radius: 11px;
+    background: #F5F6F8; border-left: 3px solid #C9A84C;
+    font-size: 13.5px; color: #4B5563; line-height: 1.85; word-break: keep-all;
+  }
+  .note b { color: #0A1628; }
+
+  /* 비교표 */
+  table.t td.me { background: #FEFCF6; color: #0A1628; font-weight: 700; }
+  table.t th.me { background: #0A1628; color: #C9A84C; }
+
+  /* 취급 사양 */
+  .specs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  @media (max-width: 860px) { .specs { grid-template-columns: repeat(2, 1fr); } }
+  .spec { border: 1px solid #E5E8EE; border-radius: 12px; padding: 18px 16px; background: #fff; }
+  .spec b { display: block; font-size: 15px; color: #0A1628; margin-bottom: 6px; }
+  .spec span { font-size: 13px; color: #6B7280; line-height: 1.7; word-break: keep-all; }
+
+  /* 진행 절차 */
+  .flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 860px) { .flow { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 480px) { .flow { grid-template-columns: 1fr; } }
+  .fstep { border: 1px solid #E5E8EE; border-radius: 14px; padding: 22px 20px 20px; background: #fff; }
+  .fstep .no {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; border-radius: 50%;
+    background: #0A1628; color: #C9A84C; font-size: 13px; font-weight: 800; margin-bottom: 12px;
+  }
+  .fstep h4 { font-size: 15.5px; font-weight: 800; color: #0A1628; margin-bottom: 8px; }
+  .fstep p { font-size: 13.5px; color: #4B5563; line-height: 1.8; word-break: keep-all; }
+
+  /* FAQ */
+  .faq details { border: 1px solid #E5E8EE; border-radius: 12px; background: #fff; }
+  .faq details + details { margin-top: 10px; }
+  .faq summary { cursor: pointer; list-style: none; padding: 18px 20px; font-size: 15px; font-weight: 800; color: #0A1628; display: flex; gap: 10px; word-break: keep-all; }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::before { content: "Q"; color: #B07D20; }
+  .faq details[open] summary { border-bottom: 1px solid #F0F2F5; }
+  .faq .ans { padding: 16px 20px 20px 42px; font-size: 14px; color: #4B5563; line-height: 1.9; word-break: keep-all; }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap hd">
+    <a class="logo" href="index.html"><b>My<i>truck</i></b><span>화물차 금융 · 특장 원스톱</span></a>
+    <button class="burger" type="button" aria-label="메뉴" aria-expanded="false"><span></span><span></span><span></span></button>
+    <nav class="gnb">
+      <a href="about.html">회사소개</a>
+      <a href="products.html">상품안내</a>
+      <a href="special.html">특장 · 구조변경</a>
+      <a href="board.html">게시판</a>
+      <a href="contact.html">문의하기</a>
+      <a class="hd-cta" href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page-head">
+  <div class="wrap">
+    <p class="eyebrow">Special Body · One-stop</p>
+    <h1>특장 · 구조변경 원스톱</h1>
+    <p>견적서만 전달하고 끝나는 중개가 아닙니다.<br>사양 확인부터 금융사 협의, 구조변경 등록, 반납 조건까지 한 창구에서 진행합니다</p>
+  </div>
+</div>
+
+<nav class="anchor-nav">
+  <div class="wrap in">
+    <a href="#why">왜 어려운가</a>
+    <a href="#compare">중개와 다른 점</a>
+    <a href="#include">특장비 포함</a>
+    <a href="#restore">원상복구 없는 반납</a>
+    <a href="#structure">구조변경 · 등록</a>
+    <a href="#wrapping">래핑 · 도색</a>
+    <a href="#specs">취급 사양</a>
+    <a href="#process">진행 절차</a>
+    <a href="#faq">자주 묻는 질문</a>
+  </div>
+</nav>
+
+<!-- ===== 왜 어려운가 ===== -->
+<section class="sec" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Why</p>
+      <h2>특장차 리스가 유독 까다로운 이유</h2>
+      <p>차량만 사는 일이라면 어디서 하든 비슷합니다. 차이는 <b>차 위에 무엇을 올리느냐</b>에서 생깁니다.</p>
+    </div>
+    <div class="pain">
+      <div class="card">
+        <p class="q">PROBLEM 01</p>
+        <h3>장착비는 현금으로 내라고 합니다</h3>
+        <p>금융사는 제조사 차량가만 기준으로 심사하는 경우가 많습니다. 탑 · 윙바디 · 냉동기 같은 장착비는 리스에서 빠지고, 출고 전에 목돈으로 따로 준비해야 합니다.</p>
+        <p class="a">→ Mytruck 은 사양과 금액 구성을 금융사에 먼저 설명해 장착비를 리스료에 넣는 방향으로 협의합니다.</p>
+      </div>
+      <div class="card">
+        <p class="q">PROBLEM 02</p>
+        <h3>반납할 때 원상복구를 요구합니다</h3>
+        <p>운용리스는 만기에 차를 돌려줘야 합니다. 이때 올린 탑을 떼어내고 처음 상태로 되돌리라는 조건이 붙으면 철거 비용과 시간이 고스란히 고객 몫이 됩니다.</p>
+        <p class="a">→ 계약 전에 반납 조건을 확인하고, 원상복구 없이 반납할 수 있는 금융사로 진행합니다.</p>
+      </div>
+      <div class="card">
+        <p class="q">PROBLEM 03</p>
+        <h3>구조변경 행정이 따로 놉니다</h3>
+        <p>리스 · 렌트 차량은 명의가 금융사에 있어 구조변경에도 금융사 동의가 필요합니다. 제작사, 검사소, 금융사 사이를 고객이 직접 오가면 출고가 몇 주씩 밀립니다.</p>
+        <p class="a">→ 제작사 섭외부터 구조변경 승인 · 등록까지 Mytruck 이 일정을 맞춰 대행합니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 중개와 다른 점 ===== -->
+<section class="sec tint" id="compare">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Difference</p>
+      <h2>단순 견적 중개와 무엇이 다른가</h2>
+      <p>같은 차를 리스해도 <b>특장 · 반납 조건을 누가 챙기느냐</b>에 따라 실제 부담이 달라집니다.</p>
+    </div>
+    <div class="tbl-scroll">
+      <table class="t">
+        <thead>
+          <tr><th style="width:132px">구분</th><th>일반 견적 중개</th><th class="me">Mytruck</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>견적</th><td>금융사 견적서 전달</td><td class="me">리스 · 할부 · 렌트를 같은 조건으로 비교</td></tr>
+          <tr><th>특장비</th><td>별도 현금 부담이 일반적</td><td class="me">사양 설명 후 리스료 포함 협의</td></tr>
+          <tr><th>반납 조건</th><td>계약서 그대로, 만기에 확인</td><td class="me">계약 전 확인 · 원상복구 없는 조건으로 진행</td></tr>
+          <tr><th>구조변경</th><td>고객이 직접 진행</td><td class="me">승인 신청 · 검사 · 등록 대행</td></tr>
+          <tr><th>제작사 · 장착</th><td>고객이 직접 섭외</td><td class="me">용도에 맞는 제작사 연결 · 사양 자문</td></tr>
+          <tr><th>래핑 · 도색</th><td>출고 후 따로 진행</td><td class="me">출고 일정에 맞춰 함께 진행</td></tr>
+          <tr><th>심사</th><td>거절되면 처음부터 다시</td><td class="me">특장 경험이 있는 다른 금융사로 이어서 진행</td></tr>
+          <tr><th>출고 일정</th><td>차량 출고일만 안내</td><td class="me">장착 · 구조변경 · 등록까지 역산해 관리</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 서비스 상세 ===== -->
+<section class="sec">
+  <div class="wrap">
+
+    <div class="svc" id="include">
+      <div>
+        <span class="badge">특장비 리스 포함</span>
+        <h2>탑 · 윙바디 · 냉동기까지<br><em>월 리스료 하나로</em></h2>
+        <p class="desc">
+          특장비는 차량가의 절반에 이르기도 합니다. 이 금액을 출고 전에 현금으로 준비하면 리스를 쓰는 의미가 줄어듭니다.
+          Mytruck 은 장착물 사양과 가액 구성을 금융사가 이해할 수 있게 정리해 미리 설명하고, 특장비를 리스료에 포함하는 조건으로 협의합니다.
+        </p>
+      </div>
+      <ul class="ck-list">
+        <li><span class="ck">✓</span><div><b>사양서 · 견적서 정리</b>장착업체 견적을 금융사 심사 기준에 맞는 형태로 정리합니다.</div></li>
+        <li><span class="ck">✓</span><div><b>특장 경험이 있는 금융사 선별</b>장착비 포함 심사가 가능한 금융사를 골라 진행합니다.</div></li>
+        <li><span class="ck">✓</span><div><b>외주 장착비 포함</b>파워게이트 · 적재함 바닥 · 공구함 같은 외주 장착도 함께 묶어 협의합니다.</div></li>
+      </ul>
+    </div>
+
+    <div class="svc" id="restore">
+      <div>
+        <span class="badge">원상복구 없는 반납</span>
+        <h2>만기에 탑을 떼지 않고<br><em>그대로 반납</em></h2>
+        <p class="desc">
+          반납 조건은 출고 후에 바꾸기 어렵습니다. 그래서 계약 전에 금융사별 반납 조건을 먼저 확인하고,
+          특장 상태 그대로 반납할 수 있는 금융사로 진행합니다. 철거 비용과 철거 기간 동안의 운행 공백을 미리 없애는 일입니다.
+        </p>
+        <div class="note">
+          <b>계약 전에 확인해 드립니다.</b>
+          원상복구 조건은 금융사와 장착 사양에 따라 달라집니다. 견적 단계에서 반납 조건을 함께 안내드리고, 조건이 맞는 금융사로만 진행합니다.
+        </div>
+      </div>
+      <ul class="ck-list">
+        <li><span class="ck">✓</span><div><b>반납 조건 사전 확인</b>원상복구 요구 여부를 계약 전에 금융사와 확인합니다.</div></li>
+        <li><span class="ck">✓</span><div><b>만기 선택지 비교</b>반납 · 연장 · 인수 중 어느 쪽이 유리한지 잔존가치와 시세로 비교해 드립니다.</div></li>
+        <li><span class="ck">✓</span><div><b>후속 차량 일정</b>제작 기간을 감안해 만기 전에 다음 차량 발주 시점을 잡아 드립니다.</div></li>
+      </ul>
+    </div>
+
+    <div class="svc" id="structure">
+      <div>
+        <span class="badge">구조변경 · 등록</span>
+        <h2>승인 신청부터 등록까지<br><em>대신 진행합니다</em></h2>
+        <p class="desc">
+          적재함을 바꾸거나 탑을 올리면 구조변경 승인과 검사, 등록 변경이 필요합니다.
+          리스 · 렌트 차량은 금융사 동의 절차까지 겹칩니다. Mytruck 이 제작사 · 검사소 · 금융사 사이 서류와 일정을 맞춰 출고까지 이어지게 합니다.
+        </p>
+      </div>
+      <ul class="ck-list">
+        <li><span class="ck">✓</span><div><b>금융사 동의 협의</b>명의자인 금융사의 구조변경 동의를 받아 둡니다.</div></li>
+        <li><span class="ck">✓</span><div><b>승인 · 검사 · 등록 대행</b>구조변경 승인 신청부터 검사, 등록 변경까지 진행합니다.</div></li>
+        <li><span class="ck">✓</span><div><b>운행 중 구조변경도 상담</b>이미 운행 중인 리스 차량의 사양 변경도 금융사와 협의해 드립니다.</div></li>
+      </ul>
+    </div>
+
+    <div class="svc" id="wrapping">
+      <div>
+        <span class="badge">래핑 · 도색</span>
+        <h2>회사 차량답게<br><em>래핑 · 도색까지</em></h2>
+        <p class="desc">
+          배송 · 이동판매 · 현장 작업 차량은 차 자체가 광고판입니다. 로고 래핑이나 도색을 출고 일정에 맞춰 함께 진행하고,
+          비용을 리스료에 넣을 수 있는지도 금융사와 함께 협의합니다.
+        </p>
+      </div>
+      <ul class="ck-list">
+        <li><span class="ck">✓</span><div><b>출고와 동시 진행</b>장착 · 구조변경 일정 사이에 래핑을 끼워 넣어 인도 시점을 늦추지 않습니다.</div></li>
+        <li><span class="ck">✓</span><div><b>반납 시 처리 조건 확인</b>래핑 제거가 필요한지 계약 전에 금융사와 확인합니다.</div></li>
+        <li><span class="ck">✓</span><div><b>여러 대 일괄 진행</b>같은 디자인으로 여러 대를 맞출 때도 한 번에 진행합니다.</div></li>
+      </ul>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===== 취급 사양 ===== -->
+<section class="sec tint" id="specs">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Specs</p>
+      <h2>이런 사양을 다룹니다</h2>
+      <p>목록에 없는 사양이나 특이차종도 <b>사양서를 보내주시면</b> 가능 여부를 확인해 드립니다.</p>
+    </div>
+    <div class="specs">
+      <div class="spec"><b>윙바디</b><span>수동 · 전동, 탑 사이즈 맞춤 제작</span></div>
+      <div class="spec"><b>내장탑 · 탑차</b><span>하이탑 · 저상 · 택배전용 · 양문형</span></div>
+      <div class="spec"><b>냉동 · 냉장탑</b><span>냉동기 사양, 초저온 · 하이 · 저상</span></div>
+      <div class="spec"><b>파워게이트 · 리프트</b><span>일반 · 트랜스 · 확장형 판넬</span></div>
+      <div class="spec"><b>카고 · 적재함</b><span>적재함 바닥, 하부 보강, 공구함</span></div>
+      <div class="spec"><b>덤프 · 크레인</b><span>소형 덤프, 크레인 장착</span></div>
+      <div class="spec"><b>래핑 · 도색</b><span>로고 래핑, 전체 도색</span></div>
+      <div class="spec"><b>특이차종</b><span>이동판매 · 캠핑 · 작업차 · 휠체어 리프트 등</span></div>
+    </div>
+    <div class="note">
+      <b>1톤급 중심으로 진행합니다.</b>
+      포터 · 봉고 · 봉고 EV · ST1 · PV5 등 소형 상용차가 중심이며, 2.5톤 이상 상용차는 사양에 따라 별도로 협의합니다.
+    </div>
+  </div>
+</section>
+
+<!-- ===== 진행 절차 ===== -->
+<section class="sec" id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Process</p>
+      <h2>특장 원스톱 진행 절차</h2>
+      <p>특장 조건은 계약 시점에 정해집니다. 그래서 순서가 중요합니다.</p>
+    </div>
+    <div class="flow">
+      <div class="fstep">
+        <div class="no">1</div>
+        <h4>용도 · 사양 확인</h4>
+        <p>무엇을 싣고 어떻게 쓰실지 듣고 장착물을 정리합니다. 이미 받으신 사양서나 견적서가 있으면 먼저 검토합니다.</p>
+      </div>
+      <div class="fstep">
+        <div class="no">2</div>
+        <h4>금융사 협의 · 심사</h4>
+        <p>특장 경험이 있는 금융사에 사양과 금액 구성을 설명하고 장착비 포함 · 원상복구 제외 조건으로 심사를 진행합니다.</p>
+      </div>
+      <div class="fstep">
+        <div class="no">3</div>
+        <h4>제작 · 구조변경</h4>
+        <p>제작사를 연결하고 차량 출고와 장착 일정을 맞춥니다. 구조변경 승인과 검사, 래핑까지 이어서 진행합니다.</p>
+      </div>
+      <div class="fstep">
+        <div class="no">4</div>
+        <h4>등록 · 인도</h4>
+        <p>등록 변경을 확인한 뒤 차량을 인도합니다. 이후 보험 갱신과 만기 일정도 함께 챙겨 드립니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FAQ ===== -->
+<section class="sec tint" id="faq">
+  <div class="wrap narrow">
+    <div class="sec-head">
+      <p class="eyebrow">FAQ</p>
+      <h2>자주 묻는 질문</h2>
+    </div>
+    <div class="faq">
+      <details>
+        <summary>특장비를 정말 리스료에 넣을 수 있나요?</summary>
+        <div class="ans">금융사마다 기준이 달라 모든 경우에 되는 것은 아닙니다. 특장 심사 경험이 있는 금융사를 골라 사양과 금액 구성을 미리 설명하고 협의합니다. 견적 단계에서 포함 가능 여부와 조건을 함께 안내드립니다.</div>
+      </details>
+      <details>
+        <summary>원상복구 없이 반납한다는 건 어떤 뜻인가요?</summary>
+        <div class="ans">운용리스 만기에 차를 돌려줄 때, 올린 탑이나 장착물을 떼어내지 않고 그 상태 그대로 반납하는 조건입니다. 반납 조건은 출고 후 바꾸기 어려워 계약 전에 금융사와 확인하고, 조건이 맞는 금융사로 진행합니다.</div>
+      </details>
+      <details>
+        <summary>이미 운행 중인 리스 차량도 구조변경이 되나요?</summary>
+        <div class="ans">명의자인 금융사의 동의가 필요합니다. 현재 계약 내용과 원하시는 사양을 알려주시면 금융사와 협의해 가능 여부와 절차를 안내드립니다.</div>
+      </details>
+      <details>
+        <summary>장착업체를 제가 이미 정해 두었는데 괜찮나요?</summary>
+        <div class="ans">괜찮습니다. 받으신 사양서 · 견적서를 보내주시면 그 내용을 기준으로 금융사 협의를 진행합니다. 업체를 정하지 않으셨다면 용도에 맞는 제작사를 연결해 드립니다.</div>
+      </details>
+      <details>
+        <summary>목록에 없는 특이차종도 상담할 수 있나요?</summary>
+        <div class="ans">네. 이동판매차, 캠핑카, 작업차처럼 사양이 정해져 있지 않은 차량도 사양서나 참고 사진을 보내주시면 금융사 진행 가능 여부를 확인해 드립니다.</div>
+      </details>
+      <details>
+        <summary>상담이나 대행에 별도 비용이 드나요?</summary>
+        <div class="ans">견적 · 상담 · 금융사 협의 · 구조변경 진행 안내에는 별도 수수료를 받지 않습니다. 특장 제작비, 구조변경 검사 수수료, 래핑 비용처럼 실제로 발생하는 비용은 견적에 항목별로 적어 드립니다.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section class="cta-band">
+  <div class="wrap">
+    <h2>특장 사양, <em>먼저 보내 주세요</em></h2>
+    <p>사양서나 장착업체 견적서가 있으면 금융사 진행 가능 여부부터 확인해 드립니다.</p>
+    <div class="btn-row center">
+      <a class="btn btn-gold" href="quote.html" target="_blank" rel="noopener">특장차 견적요청</a>
+      <a class="btn btn-line" href="contact.html">사양서 보내고 문의하기</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-logo">
+        <b>My<i>truck</i></b>
+        <p>화물차 금융 · 특장 원스톱</p>
+      </div>
+      <nav class="ft-nav">
+        <a href="about.html">회사소개</a>
+        <a href="products.html">상품안내</a>
+        <a href="special.html">특장 · 구조변경</a>
+        <a href="board.html">게시판</a>
+        <a href="contact.html">문의하기</a>
+        <a href="quote.html" target="_blank" rel="noopener">견적요청하기</a>
+      </nav>
+    </div>
+    <div class="ft-info">
+      <span class="cname">(주)제이디엔드</span><span class="sep">|</span>대표자 박동천<span class="sep br">|</span>사업자등록번호 766-86-02631<br>
+      서울특별시 영등포구 여의대방로 379, 605호<span class="sep br">|</span>대표전화 02-6925-0516<span class="sep">|</span>이메일 jdgp@jdgp.co.kr
+      <div class="ft-copy">&copy; 2026 Mytruck. All rights reserved.</div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+<!-- 네이버 프리미엄 로그분석 (공통) -->
+<script type="text/javascript" src="//wcs.naver.net/wcslog.js"></script>
+<script type="text/javascript">
+if (!wcs_add) var wcs_add = {};
+wcs_add["wa"] = "s_2ae8a1ab6bae";
+if (!_nasa) var _nasa = {};
+if (window.wcs) {
+  wcs.inflow("mytruck.kr");
+  wcs_do();
+}
+</script>
+</body>
+</html>
