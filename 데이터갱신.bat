@@ -1,5 +1,6 @@
 @echo off
-REM ASCII only - Korean messages are printed by tools/xlsx-to-data.js
+REM ASCII only - Korean messages are printed by tools/acerent-to-data.js
+REM Source: ..\acerent\src\data\quote-data.json
 cd /d "%~dp0"
 
 where node >nul 2>&1
@@ -12,7 +13,7 @@ if errorlevel 1 (
   exit /b 1
 )
 
-node tools\xlsx-to-data.js
+node tools\acerent-to-data.js
 if errorlevel 1 (
   pause
   exit /b 1

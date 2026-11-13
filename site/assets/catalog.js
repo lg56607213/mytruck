@@ -51,7 +51,8 @@ const RULES = [
 
 /* 카드 순서 — 주력 차종을 앞에 둔다. 여기 없는 차는 뒤로, 같은 차끼리는 싼 순. */
 const MODEL_ORDER = [
-  "포터II", "봉고3 EV", "포터II Electric", "ST1", "PV5", "스타리아", "스타리아 Hybrid", "레이",
+  "포터II", "봉고3", "봉고3 EV", "포터II Electric", "ST1", "PV5", "스타리아", "스타리아 Hybrid", "레이",
+  "모닝", "타스만",
 ];
 
 /* 전기차 — 이름만으로는 알 수 없는 차종은 여기에 적는다 */
@@ -86,7 +87,7 @@ function tagsOf(v) {
 
 /* 이 이름들은 "분류"이고, 그 아래 단계가 실제 차량명이다.
    반대로 여기 없는 이름(예: 포터II)은 그 자체가 차량명이다. */
-const GROUP_KEYS = new Set(["수소/전기차", "MPV", "전기차", "PBV", "승용"]);
+const GROUP_KEYS = new Set(["수소/전기차", "MPV", "전기차", "PBV", "승용", "RV"]);
 
 function classify(v) {
   // v.sub 은 데이터상 한 단계 위 이름이다. '포터II > 특장차 > 시티밴' 처럼
@@ -113,7 +114,11 @@ function buildCatalog() {
           //   분류가 있는 경우 : 브랜드 > 분류 > 차량명 > 세부사양
           //   분류가 없는 경우 : 브랜드 > 차량명 > 세부구분 > 세부사양
           const model = isGroup ? lv3 : cat;
-          const body  = isGroup ? lv4 : (lv3 === "특장차" ? lv4 : lv3 + " " + lv4);
+          // 특장차는 '특장차'를 빼고 적재함 이름만 쓴다 (봉고3 > 1톤 특장차 > 윙바디 → 1톤 윙바디)
+          const special = lv3.replace(/\s*특장차$/, "");
+          const body  = isGroup ? lv4
+                      : special !== lv3 ? (special ? special + " " : "") + lv4
+                      : lv3 + " " + lv4;
 
           const trims = TRUCK_DATA[brand][cat][lv3][lv4];
           const prices = Object.values(trims)
@@ -125,7 +130,8 @@ function buildCatalog() {
             brand, cat, model, body, sub: lv3,
             // 견적 폼에 그대로 넘길 실제 데이터 경로
             path: { brand, cat, model: lv3, body: lv4 },
-            name: (model + " " + body).replace(/\s+/g, " ").trim(),
+            // 세부사양이 차량명과 같으면(타스만 > 타스만) 한 번만 쓴다
+            name: (body === model ? model : model + " " + body).replace(/\s+/g, " ").trim(),
             price: Math.min(...prices),
             trimCount: prices.length,
           };

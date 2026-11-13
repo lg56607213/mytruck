@@ -399,6 +399,18 @@
           <div class="sub-chips" id="opt-grp"></div>
         </div>
 
+        <div class="frow" id="color-wrap" style="display:none">
+          <span class="flabel">색상 <span class="sub">(선택 · 정하지 않으셔도 됩니다)</span></span>
+          <div id="extcolor-row" style="margin-bottom:8px">
+            <div style="font-size:12px;color:#888;margin-bottom:6px">외장</div>
+            <div class="sub-chips" id="extcolor-grp"></div>
+          </div>
+          <div id="intcolor-row">
+            <div style="font-size:12px;color:#888;margin-bottom:6px">내장</div>
+            <div class="sub-chips" id="intcolor-grp"></div>
+          </div>
+        </div>
+
         <div id="price-wrap" style="display:none">
           <div class="price-card">
             <div>
@@ -647,6 +659,7 @@
           <div class="sum-row" id="row-usedwhen" style="display:none"><span class="sum-key">상태 / 필요시기</span><span class="sum-val" id="sum-usedwhen">-</span></div>
           <div class="sum-row" id="row-price"><span class="sum-key">예상 차량가</span><span class="sum-val" id="sum-price">-</span></div>
           <div class="sum-row" id="row-opts"><span class="sum-key">제조사 옵션</span><span class="sum-val" id="sum-opts">-</span></div>
+          <div class="sum-row" id="row-color"><span class="sum-key">색상</span><span class="sum-val" id="sum-color">-</span></div>
           <div class="sum-row"><span class="sum-key">외주 옵션</span><span class="sum-val" id="sum-ext">-</span></div>
           <div class="sum-row"><span class="sum-key">선납금 / 보증금</span><span class="sum-val" id="sum-cond">-</span></div>
           <div class="sum-row"><span class="sum-key">계약기간 / 주행거리</span><span class="sum-val" id="sum-term">-</span></div>
@@ -729,6 +742,8 @@ const state = {
   usage: "",           // 영업용(노란색 번호판) / 자가용(흰색 번호판)
   brand: "", cat: "", model: "", body: "", trim: "",
   opts: [],            // [{n, p}]  제조사 옵션
+  extColor: null,      // {n, p}  외장 색상 (선택)
+  intColor: null,      // {n, p}  내장 색상 (선택)
   ext: [],             // 외주 옵션 (추천 항목)
   extCustom: [],       // 외주 옵션 (직접 입력)
   prepay: "", deposit: "", period: "", periodCustom: false, km: "",
@@ -770,6 +785,8 @@ function fill(grpId, wrapId, items, cls, onPick) {
 function hideFrom(level) {
   const wraps = ["cat-wrap", "model-wrap", "body-wrap", "trim-wrap", "opt-wrap"];
   wraps.slice(level).forEach(id => document.getElementById(id).style.display = "none");
+  document.getElementById("color-wrap").style.display = "none";
+  state.extColor = state.intColor = null;
   document.getElementById("price-wrap").style.display = "none";
 }
 
@@ -851,7 +868,52 @@ function pickTrim(trim) {
     });
     document.getElementById("opt-wrap").style.display = "block";
   }
+  renderColors();
   updatePrice();
+}
+
+/* 색상 — 모델별 색상표(TRUCK_COLORS). 한 번 더 누르면 선택을 푼다. */
+function curColors() {
+  try { return TRUCK_COLORS[state.brand][state.cat][state.model] || null; }
+  catch (e) { return null; }
+}
+
+function renderColors() {
+  const cols = curColors();
+  let any = false;
+  [["ext", "extColor"], ["int", "intColor"]].forEach(([side, key]) => {
+    const list = (cols && cols[side]) || [];
+    const grp = document.getElementById(side + "color-grp");
+    grp.innerHTML = "";
+    list.forEach(c => {
+      const d = document.createElement("div");
+      d.className = "sub-chip";
+      d.textContent = c.n;
+      if (c.p) d.innerHTML += '<span class="op">+' + won(c.p) + '원</span>';
+      d.onclick = () => {
+        const on = !d.classList.contains("sel");
+        grp.querySelectorAll(".sub-chip").forEach(x => x.classList.remove("sel"));
+        if (on) d.classList.add("sel");
+        state[key] = on ? c : null;
+        updatePrice();
+      };
+      grp.appendChild(d);
+    });
+    document.getElementById(side + "color-row").style.display = list.length ? "block" : "none";
+    if (list.length) any = true;
+  });
+  document.getElementById("color-wrap").style.display = any ? "block" : "none";
+}
+
+function colorSum() {
+  return (state.extColor ? state.extColor.p : 0) + (state.intColor ? state.intColor.p : 0);
+}
+
+function colorLabel() {
+  const parts = [];
+  if (state.extColor) parts.push("외장 " + state.extColor.n + (state.extColor.p ? "(+" + won(state.extColor.p) + "원)" : ""));
+  if (state.intColor) parts.push("내장 " + state.intColor.n + (state.intColor.p ? "(+" + won(state.intColor.p) + "원)" : ""));
+  return parts.length ? parts.join(" / ") : "미정";
 }
 
 function curTrim() {
@@ -862,7 +924,7 @@ function curTrim() {
 function totalPrice() {
   const node = curTrim();
   if (!node) return 0;
-  return (node.price || 0) + state.opts.reduce((s, o) => s + (o.p || 0), 0);
+  return (node.price || 0) + state.opts.reduce((s, o) => s + (o.p || 0), 0) + colorSum();
 }
 
 function updatePrice() {
@@ -870,8 +932,11 @@ function updatePrice() {
   if (!node) return;
   const optSum = state.opts.reduce((s, o) => s + (o.p || 0), 0);
   document.getElementById("price-disp").innerHTML = won(totalPrice()) + '<small>원</small>';
+  const parts = [];
+  if (optSum) parts.push("옵션 " + won(optSum) + "원");
+  if (colorSum()) parts.push("색상 " + won(colorSum()) + "원");
   document.getElementById("price-break").textContent =
-    optSum ? "기본 " + won(node.price) + "원 + 옵션 " + won(optSum) + "원" : "";
+    parts.length ? "기본 " + won(node.price) + "원 + " + parts.join(" + ") : "";
   document.getElementById("price-wrap").style.display = "block";
 }
 
@@ -1107,6 +1172,7 @@ function buildSummary() {
   show("row-usedwhen", state.isUsed);
   show("row-price", !state.isUsed);
   show("row-opts", !state.isUsed);
+  show("row-color", !state.isUsed);
   if (state.isUsed) {
     document.getElementById("sum-usedcond").textContent =
       (state.usedYear || "연식 무관") + " / " + (state.usedKm || "주행거리 무관");
@@ -1120,6 +1186,7 @@ function buildSummary() {
   document.getElementById("sum-car").textContent    = carLabel() || "-";
   document.getElementById("sum-price").textContent  = totalPrice() ? won(totalPrice()) + "원" : "-";
   document.getElementById("sum-opts").textContent   = state.opts.length ? state.opts.map(o => o.n).join(", ") : "없음";
+  document.getElementById("sum-color").textContent  = colorLabel();
   document.getElementById("sum-ext").textContent    = ext.length ? ext.join(", ") : "없음";
   document.getElementById("sum-cond").textContent   = "선납 " + (state.prepay || "-") + " / 보증 " + (state.deposit || "-");
   document.getElementById("sum-term").textContent   = (state.period || "-") + " / " + (state.km || "-");
@@ -1159,6 +1226,7 @@ function buildDetail(p) {
         "── 내차만들기",
         "차량       : " + p.car_full,
         "제조사옵션 : " + p.factory_options,
+        "색상       : " + p.car_color,
         "예상차량가 : " + p.estimated_price
       ];
 
@@ -1220,6 +1288,7 @@ async function submitForm() {
     used_budget:      state.usedBudget || "-",
     factory_options:  state.isUsed ? "해당 없음 (중고)"
                       : (state.opts.length ? state.opts.map(o => o.n + "(+" + won(o.p) + "원)").join(", ") : "없음"),
+    car_color:        state.isUsed ? "해당 없음 (중고)" : colorLabel(),
     estimated_price:  state.isUsed ? "중고 재고 확인 후 산정" : won(totalPrice()) + "원",
     external_options: state.ext.length ? state.ext.join(", ") : "없음",
     external_custom:  state.extCustom.length ? state.extCustom.join(", ") : "없음",
