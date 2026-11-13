@@ -12,7 +12,13 @@
   "name": "mytruck",
   "compatibility_date": "2026-08-01",
 
+  // /api/* 만 처리하는 Worker (알림 메일). 나머지는 아래 assets 가 그대로 낸다.
+  "main": "src/index.js",
+
   "assets": {
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+
     // 배포할 폴더 — 이 안의 파일이 사이트 루트가 된다.
     "directory": "./site",
 
@@ -23,6 +29,17 @@
     // /quote.html 로 들어와도 /quote 로 정리해서 보여준다.
     // site/_redirects 의 /quote → /quote.html 규칙과 함께 동작한다.
     "html_handling": "auto-trailing-slash"
+  },
+
+  // 알림 메일 — Cloudflare Email Routing (mytruck.kr → 이메일 → Email Routing)
+  // NOTIFY_TO 는 Email Routing '대상 주소'에 등록 · 인증된 주소여야 한다. 여러 곳이면 쉼표로.
+  "send_email": [
+    { "name": "MAILER" }
+  ],
+  "vars": {
+    "MAIL_FROM": "noti@mytruck.kr",
+    "MAIL_FROM_NAME": "Mytruck 홈페이지",
+    "NOTIFY_TO": "jdgp@jdgp.co.kr"
   },
 
   "observability": {

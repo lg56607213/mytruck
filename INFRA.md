@@ -20,6 +20,22 @@
 
 `netlify.toml` 은 Netlify 시절 잔재이며 현재 사용하지 않는다. (참고용으로만 남겨둠)
 
+## 1-1. 알림 메일 (Email Routing)
+
+견적 · 문의 · 빠른상담 메일은 Worker(`src/index.js`)가 Cloudflare Email Routing 으로 보낸다.
+
+| 항목 | 값 |
+|---|---|
+| 보내는 주소 | `noti@mytruck.kr` (`wrangler.jsonc` → `vars.MAIL_FROM`) |
+| 받는 주소 | `wrangler.jsonc` → `vars.NOTIFY_TO` (여러 곳이면 쉼표) |
+| 대시보드 | mytruck.kr → 이메일 → Email Routing **사용**, 받는 주소를 **대상 주소**로 추가 · 인증 |
+
+- 무료 발송은 **인증된 대상 주소로만** 된다. 고객에게 보내는 메일은 이 방식으로 못 보낸다 (고객 회신은 수동).
+- 받는 주소를 바꾸면 `NOTIFY_TO` 수정 + 대상 주소 인증을 **둘 다** 해야 한다.
+- Cloudflare 발송이 실패하면 화면이 EmailJS(`service_1tfrm9f` / `template_tiosvos`)로 다시 보낸다.
+  Email Routing 을 켜기 전이나 설정이 틀렸을 때도 메일이 끊기지 않는 이유다.
+- 메일의 답장 주소(Reply-To)는 고객이 적은 이메일이다 — 메일함에서 답장하면 고객에게 간다.
+
 ## 2. DNS (Cloudflare)
 
 네임서버: `grant.ns.cloudflare.com` / `magdalena.ns.cloudflare.com`

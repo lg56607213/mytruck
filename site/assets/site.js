@@ -151,6 +151,31 @@ function fmtPhone(el) {
    ================================================ */
 var MT_LEADS_URL = 'https://leads.jdgp.workers.dev/lead';
 
+/* ================================================
+   알림 메일 전송
+   Cloudflare 메일(/api/notify, src/index.js)로 먼저 보내고,
+   실패하면 예전처럼 EmailJS 로 보낸다. 둘 다 실패하면 오류를 던진다.
+   params 는 예전 EmailJS 템플릿 변수 그대로 (quote_detail 이 본문).
+   ================================================ */
+var MT_EMAILJS = { service: 'service_1tfrm9f', template: 'template_tiosvos' };
+
+async function mtSendMail(params) {
+  var hp = document.getElementById('mt-hp');
+  var body = Object.assign({}, params, hp && hp.value ? { website: hp.value } : {});
+  try {
+    var res = await fetch('/api/notify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.ok) return 'cloudflare';
+  } catch (e) { /* 아래 EmailJS 로 */ }
+
+  if (typeof emailjs === 'undefined') throw new Error('메일 전송 실패');
+  await emailjs.send(MT_EMAILJS.service, MT_EMAILJS.template, params);
+  return 'emailjs';
+}
+
 function mtSaveLead(payload) {
   var s = {};
   try { s = mtCapture() || {}; } catch (e) {}

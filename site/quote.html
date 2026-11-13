@@ -724,14 +724,12 @@
 <script src="truck-data.js"></script>
 <script>
 /* ================================================
-   EmailJS 설정 (EmailJS 대시보드 > Email Services / Email Templates)
-   - 템플릿 본문에 <pre>{{quote_detail}}</pre> 하나만 넣으면 전체 내용이 전달됩니다.
+   알림 메일 — mtSendMail(site.js): Cloudflare 메일(/api/notify) 우선, 실패하면 EmailJS.
+   본문은 quote_detail 하나에 다 들어간다 (EmailJS 템플릿도 <pre>{{quote_detail}}</pre>).
    ================================================ */
-const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";   // 계정 공용 키
-const EMAILJS_SERVICE_ID  = "service_1tfrm9f";     // Mytruck (Gmail)
-const EMAILJS_TEMPLATE_ID = "template_tiosvos";    // Mytruck 견적신청
+const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";   // EmailJS 계정 공용 키 (예비 발송용)
 
-emailjs.init(EMAILJS_PUBLIC_KEY);
+if (typeof emailjs !== "undefined") emailjs.init(EMAILJS_PUBLIC_KEY);
 
 /* ================================================
    STATE
@@ -1322,7 +1320,7 @@ async function submitForm() {
       memo: params.quote_detail || params.message || ''
     });
 
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    await mtSendMail(params);
     document.getElementById("loading").classList.remove("show");
     document.getElementById("form-wrap").style.display = "none";
     document.getElementById("prog").style.display = "none";
@@ -1333,7 +1331,7 @@ async function submitForm() {
     document.getElementById("loading").classList.remove("show");
     btn.disabled = false;
     showToast("전송 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
-    console.error("EmailJS error:", err);
+    console.error("메일 전송 오류:", err);
   }
 }
 

@@ -1,7 +1,8 @@
 # Mytruck — 화물차 리스 · 할부 홈페이지
 
 정적 웹사이트입니다. 서버 없이 정적 파일만으로 동작합니다.
-견적요청과 문의하기는 EmailJS를 통해 이메일로 전달됩니다.
+견적요청 · 문의하기 · 빠른상담은 **Cloudflare 메일**(`src/index.js` 의 `/api/notify`)로 회사 메일함에 전달됩니다.
+Cloudflare 발송이 실패하면 예전 EmailJS 로 자동으로 다시 보냅니다 (`site/assets/site.js` 의 `mtSendMail`).
 
 - 도메인: **https://mytruck.kr**
 - 운영사: (주)제이디엔드
@@ -23,6 +24,7 @@
 │       ├─ style.css         공통 디자인
 │       ├─ site.js           공통 스크립트 (모바일 메뉴 등)
 │       └─ posts.js          게시판 글 데이터  ← 글은 여기에 씁니다
+├─ src/index.js           Worker — /api/notify 알림 메일 (나머지 주소는 site 정적 파일)
 ├─ wrangler.jsonc         Cloudflare Workers 배포 설정
 ├─ tools/acerent-to-data.js  에이스 견적기 가격표 → truck-data.js 변환기
 ├─ tools/xlsx-to-data.js  (예전) 엑셀 → truck-data.js 변환기

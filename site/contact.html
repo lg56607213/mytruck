@@ -194,14 +194,12 @@
 <script src="assets/site.js"></script>
 <script>
 /* ================================================
-   EmailJS — 견적요청 폼과 같은 서비스/템플릿을 사용합니다.
-   (템플릿 본문의 <pre>{{quote_detail}}</pre> 로 내용이 전달됩니다)
+   알림 메일 — mtSendMail(site.js): Cloudflare 메일(/api/notify) 우선, 실패하면 EmailJS.
+   본문은 quote_detail 하나에 다 들어간다 (EmailJS 템플릿도 <pre>{{quote_detail}}</pre>).
    ================================================ */
-const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";
-const EMAILJS_SERVICE_ID  = "service_1tfrm9f";
-const EMAILJS_TEMPLATE_ID = "template_tiosvos";
+const EMAILJS_PUBLIC_KEY  = "5-wSho3g1I9sELOfE";   // EmailJS 계정 공용 키 (예비 발송용)
 
-emailjs.init(EMAILJS_PUBLIC_KEY);
+if (typeof emailjs !== "undefined") emailjs.init(EMAILJS_PUBLIC_KEY);
 
 function v(id) { return document.getElementById(id).value.trim(); }
 
@@ -263,7 +261,7 @@ document.getElementById('c-submit').addEventListener('click', async function () 
       memo: v('c-msg')
     });
 
-    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params);
+    await mtSendMail(params);
     document.getElementById('loading').classList.remove('show');
     document.getElementById('formWrap').style.display = 'none';
     document.getElementById('done').classList.add('show');
@@ -273,7 +271,7 @@ document.getElementById('c-submit').addEventListener('click', async function () 
     document.getElementById('loading').classList.remove('show');
     btn.disabled = false;
     showToast("전송 중 오류가 발생했어요. 잠시 후 다시 시도해 주세요.");
-    console.error("EmailJS error:", err);
+    console.error("메일 전송 오류:", err);
   }
 });
 </script>

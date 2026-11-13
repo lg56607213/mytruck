@@ -16,3 +16,7 @@ desktop.ini
 .DS_Store
 .vscode/
 node_modules/
+
+# wrangler dev · 브라우저 테스트 임시 파일
+.wrangler/
+.playwright-mcp/

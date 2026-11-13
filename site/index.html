@@ -493,11 +493,10 @@
    ================================================ */
 (function () {
   var form = document.getElementById('quickForm');
-  if (!form || typeof emailjs === 'undefined') return;
+  if (!form) return;
 
-  emailjs.init("5-wSho3g1I9sELOfE");
-  var SERVICE  = "service_1tfrm9f";
-  var TEMPLATE = "template_tiosvos";
+  // 메일은 mtSendMail(site.js) — Cloudflare 메일 우선, 실패하면 EmailJS
+  if (typeof emailjs !== 'undefined') emailjs.init("5-wSho3g1I9sELOfE");
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -517,7 +516,7 @@
     document.getElementById('loading').classList.add('show');
     try {
       mtSaveLead({ form: 'quick', name: name, phone: phone, category: '빠른상담' });
-      await emailjs.send(SERVICE, TEMPLATE, {
+      await mtSendMail({
         customer_name:  name,
         customer_email: '-',
         customer_phone: phone,
