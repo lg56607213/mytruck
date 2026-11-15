@@ -1577,6 +1577,13 @@ function showToast(msg) {
    값이 없거나 이름이 안 맞으면 조용히 멈춘다 — 평소처럼 직접 고르면 된다.
    (차량 데이터는 엑셀에서 다시 생성되므로 이름이 바뀔 수 있다)
    ================================================ */
+/* 홈 배너에서 넘어온 경우 — quote.html?pc=low | struct | general 로 1단계 상품구분을 미리 골라 둔다 */
+(function prefillProductClass() {
+  const idx = { general: 0, low: 1, struct: 2 }[new URLSearchParams(location.search).get("pc")];
+  const card = document.querySelectorAll("#pclass-grp .sel-card")[idx];
+  if (card) card.click();
+})();
+
 (function prefillFromUrl() {
   const q = new URLSearchParams(location.search);
   if (!q.get("brand")) return;
