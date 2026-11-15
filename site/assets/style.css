@@ -331,6 +331,13 @@ ul.dot li b { color: #0A1628; }
 .mt-pop-foot button + button { border-left: 1px solid rgba(255,255,255,.12); color: #fff; }
 .mt-pop-foot button:hover { background: rgba(255,255,255,.06); }
 
+/* 같은 안내를 히어로 슬라이드(5번째 장)에도 쓴다 — 여기서는 가로로 나란히 */
+.hero-duo .inner { padding-bottom: 84px; }
+.hero-duo .duo-grid { grid-template-columns: 1fr 1fr; gap: 18px; }
+.hero-duo .duo-card { padding: 26px 28px; }
+.hero-duo .duo-card h2 { font-size: 30px; max-width: none; }
+.hero-duo .duo-card p { max-width: none; }
+
 @media (max-width: 760px) {
   .hero-slide .inner { min-height: 300px; padding: 44px 0 66px; }
   .hero-slide h2 { font-size: 27px; }
@@ -344,6 +351,12 @@ ul.dot li b { color: #0A1628; }
   .duo-card h2 { font-size: 23px; margin-bottom: 6px; }
   .duo-card p { font-size: 13.5px; margin-bottom: 8px; }
   .duo-link { font-size: 12.5px; }
+  .hero-duo .inner { padding: 28px 0 70px; }
+  .hero-duo .tagline { margin-bottom: 12px; }
+  .hero-duo .duo-grid { grid-template-columns: 1fr; gap: 10px; }
+  .hero-duo .duo-card { padding: 16px 18px; }
+  .hero-duo .duo-card h2 { font-size: 20px; }
+  .hero-duo .duo-card h2 br { display: none; }
 }
 }
 
