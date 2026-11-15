@@ -349,6 +349,22 @@
         <p class="sec-title">내 차 만들기</p>
         <p class="sec-desc">제조사부터 순서대로 선택해 주세요<br>중고차를 찾으시면 <b>중고</b>를 선택하고 원하시는 차종을 직접 적어주세요</p>
 
+        <!-- 저신용자 상품 전용 : 차종으로 고르기 / 가격으로 제안받기 -->
+        <div class="frow" id="mode-wrap" style="display:none">
+          <span class="flabel">선택 방식</span>
+          <div class="card-grid" id="mode-grp">
+            <div class="sel-card sel" id="mode-car" onclick="setMode('car')">
+              <div class="ct">차종으로 고르기</div>
+              <div class="cs">제조사부터 원하는 차량을 직접 선택</div>
+            </div>
+            <div class="sel-card" id="mode-price" onclick="setMode('price')">
+              <div class="ct">가격으로 제안받기</div>
+              <div class="cs">월 납입금에 맞는 차량을 추천받기</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="carmode-wrap">
         <div class="frow">
           <span class="flabel">제조사</span>
           <div class="chips" id="brand-grp"></div>
@@ -454,9 +470,47 @@
           </div>
         </div>
 
+        </div><!-- /carmode-wrap -->
+
+        <!-- 가격으로 제안받기 (저신용자 상품) -->
+        <div id="pricemode-wrap" style="display:none">
+          <div class="frow">
+            <span class="flabel">희망 월 납입금</span>
+            <div class="chips" id="band-grp">
+              <div class="chip" onclick="pickBand(this)">40만원 이하</div>
+              <div class="chip" onclick="pickBand(this)">50만원 이하</div>
+              <div class="chip" onclick="pickBand(this)">70만원 이하</div>
+              <div class="chip" onclick="pickBand(this)">70만원 초과</div>
+            </div>
+          </div>
+
+          <div class="frow" id="kind-wrap" style="display:none">
+            <span class="flabel">차량 종류</span>
+            <div class="card-grid one" id="kind-grp">
+              <div class="sel-card" onclick="pickKind(this,false)">
+                <div class="ct">카고 차량</div>
+                <div class="cs">일반적인 트럭 &middot; 적재함이 노출된 형태</div>
+              </div>
+              <div class="sel-card" onclick="pickKind(this,false)">
+                <div class="ct">내장탑 차량</div>
+                <div class="cs">내장탑 &middot; 윙바디 등 탑 형태</div>
+              </div>
+              <div class="sel-card" onclick="pickKind(this,true)">
+                <div class="ct">그 이외 차량</div>
+                <div class="cs">기타 &middot; 직접 입력</div>
+              </div>
+            </div>
+            <div id="kind-custom-wrap" style="display:none;margin-top:10px">
+              <input class="input-field" type="text" id="kind-custom" maxlength="60"
+                     placeholder="예) 냉동탑차 / 덤프 / 승합 밴">
+              <p class="contact-hint">원하시는 차량 종류를 직접 적어주세요.</p>
+            </div>
+          </div>
+        </div>
+
         <div class="btn-row">
           <button class="btn-prev" onclick="goStep(1)">&larr; 이전</button>
-          <button class="btn-next" onclick="goStep(3)">다음 &rarr; 외주 옵션</button>
+          <button class="btn-next" id="car-next" onclick="goStep(state.byPrice ? 4 : 3)">다음 &rarr; 외주 옵션</button>
         </div>
       </div>
 
@@ -563,7 +617,7 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-prev" onclick="goStep(3)">&larr; 이전</button>
+          <button class="btn-prev" onclick="goStep(state.byPrice ? 2 : 3)">&larr; 이전</button>
           <button class="btn-next" onclick="goStep(5)">다음 &rarr; 계약 조건</button>
         </div>
       </div>
@@ -711,12 +765,13 @@
           <div class="sum-row"><span class="sum-key">상품 종류</span><span class="sum-val" id="sum-product">-</span></div>
           <div class="sum-row"><span class="sum-key">운영 방법</span><span class="sum-val" id="sum-usage">-</span></div>
           <div class="sum-row"><span class="sum-key">차량</span><span class="sum-val" id="sum-car">-</span></div>
+          <div class="sum-row" id="row-band" style="display:none"><span class="sum-key">희망 월 납입금</span><span class="sum-val" id="sum-band">-</span></div>
           <div class="sum-row" id="row-usedcond" style="display:none"><span class="sum-key">희망 연식 / 주행</span><span class="sum-val" id="sum-usedcond">-</span></div>
           <div class="sum-row" id="row-usedwhen" style="display:none"><span class="sum-key">상태 / 필요시기</span><span class="sum-val" id="sum-usedwhen">-</span></div>
           <div class="sum-row" id="row-price"><span class="sum-key">예상 차량가</span><span class="sum-val" id="sum-price">-</span></div>
           <div class="sum-row" id="row-opts"><span class="sum-key">제조사 옵션</span><span class="sum-val" id="sum-opts">-</span></div>
           <div class="sum-row" id="row-color"><span class="sum-key">색상</span><span class="sum-val" id="sum-color">-</span></div>
-          <div class="sum-row"><span class="sum-key">외주 옵션</span><span class="sum-val" id="sum-ext">-</span></div>
+          <div class="sum-row" id="row-ext"><span class="sum-key">외주 옵션</span><span class="sum-val" id="sum-ext">-</span></div>
           <div class="sum-row"><span class="sum-key">선납금 / 보증금</span><span class="sum-val" id="sum-cond">-</span></div>
           <div class="sum-row"><span class="sum-key">계약기간 / 주행거리</span><span class="sum-val" id="sum-term">-</span></div>
           <div class="sum-row"><span class="sum-key">보험 / 정비</span><span class="sum-val" id="sum-svc">-</span></div>
@@ -806,6 +861,13 @@ const state = {
   prepayCustom: false, depositCustom: false, kmCustom: false,   // '직접입력' 선택 여부
   insurance: "", maintenance: "",
 
+  /* 가격으로 제안받기 (저신용자 상품 전용) — 차종 대신 월 납입금 구간과 차량 종류만 받는다 */
+  byPrice: false,
+  priceBand: "",       // 40만원 이하 / 50만원 이하 / 70만원 이하 / 70만원 초과
+  vehKind: "",         // 카고 차량 / 내장탑 차량 / 그 이외 차량
+  vehKindCustom: false,
+  vehKindText: "",     // '그 이외 차량' 직접 입력
+
   /* 중고차 (리스 전용) — 재고가 매일 바뀌어 가격표를 두지 않고 직접 입력받는다 */
   isUsed: false,
   usedModel: "", usedYear: "", usedKm: "", usedCond: "", usedWhen: "", usedBudget: ""
@@ -868,6 +930,50 @@ function hideFrom(level) {
     fill("cat-grp", "cat-wrap", Object.keys(TRUCK_DATA[brand]), "sub-chip", pickCat);
   });
 })();
+
+/* ── 가격으로 제안받기 (저신용자 상품 전용) ───────────────────── */
+const LOW_CREDIT = "저신용자 상품";
+
+function setMode(mode) {
+  const price = (mode === "price");
+  if (price && !state.byPrice) {
+    // 차종 선택을 비운다 — 중고 선택도 함께 풀린다
+    state.brand = state.cat = state.model = state.body = state.trim = "";
+    state.opts = [];
+    state.isUsed = false;
+    if (state.maintenance === "해당 없음 (중고차)") state.maintenance = "";
+    document.querySelectorAll("#brand-grp .chip").forEach(c => c.classList.remove("sel"));
+    document.getElementById("used-wrap").style.display = "none";
+    hideFrom(0);
+  }
+  state.byPrice = price;
+  document.getElementById("mode-car").classList.toggle("sel", !price);
+  document.getElementById("mode-price").classList.toggle("sel", price);
+  document.getElementById("carmode-wrap").style.display   = price ? "none" : "block";
+  document.getElementById("pricemode-wrap").style.display = price ? "block" : "none";
+  document.getElementById("car-next").innerHTML = price ? "다음 &rarr; 고객 정보" : "다음 &rarr; 외주 옵션";
+}
+
+function pickBand(el) {
+  document.querySelectorAll("#band-grp .chip").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  state.priceBand = el.textContent.trim();
+  document.getElementById("kind-wrap").style.display = "block";
+}
+
+function pickKind(el, custom) {
+  document.querySelectorAll("#kind-grp .sel-card").forEach(c => c.classList.remove("sel"));
+  el.classList.add("sel");
+  state.vehKind = el.querySelector(".ct").textContent.trim();
+  state.vehKindCustom = custom;
+  document.getElementById("kind-custom-wrap").style.display = custom ? "block" : "none";
+  if (custom) document.getElementById("kind-custom").focus();
+}
+
+function kindLabel() {
+  if (!state.vehKind) return "-";
+  return state.vehKindCustom ? "기타 (" + (state.vehKindText || "미입력") + ")" : state.vehKind;
+}
 
 /* 중고차 직접 입력값 수집 */
 function readUsedInputs() {
@@ -1144,7 +1250,12 @@ function checkStep(n) {
     if (!state.productClass) return "상품 구분을 선택해 주세요";
   }
   if (n === 2) {
-    if (state.isUsed) {
+    if (state.byPrice) {
+      state.vehKindText = document.getElementById("kind-custom").value.trim();
+      if (!state.priceBand) return "희망 월 납입금을 선택해 주세요";
+      if (!state.vehKind) return "차량 종류를 선택해 주세요";
+      if (state.vehKindCustom && !state.vehKindText) return "원하시는 차량 종류를 적어주세요";
+    } else if (state.isUsed) {
       readUsedInputs();
       if (!state.usedModel) return "원하시는 중고 차종을 적어주세요";
       if (!state.usedWhen) return "차량이 필요한 시기를 선택해 주세요";
@@ -1204,6 +1315,12 @@ function render(n) {
     const pl = document.getElementById("pl" + i);
     if (pl) pl.classList.toggle("done", i < n);
   }
+  if (n === 2) {
+    // 가격으로 제안받기는 저신용자 상품에서만 보인다
+    const low = (state.productClass === LOW_CREDIT);
+    document.getElementById("mode-wrap").style.display = low ? "block" : "none";
+    if (!low && state.byPrice) setMode("car");
+  }
   if (n === 4) {
     // 중고차는 리스로만 진행한다 — 할부 · 렌트 카드를 감춘다
     ["card-installment", "card-rent"].forEach(id => {
@@ -1235,6 +1352,7 @@ function usageLabel() {
 }
 
 function carLabel() {
+  if (state.byPrice) return "[가격 제안] 월 " + state.priceBand + " · " + kindLabel();
   if (state.isUsed) return state.usedModel ? "[중고] " + state.usedModel : "[중고] 차종 미입력";
   const parts = [];
   [state.brand, state.cat, state.model, state.body, state.trim].forEach(v => {
@@ -1251,9 +1369,13 @@ function buildSummary() {
   const show = (id, on) => document.getElementById(id).style.display = on ? "flex" : "none";
   show("row-usedcond", state.isUsed);
   show("row-usedwhen", state.isUsed);
-  show("row-price", !state.isUsed);
-  show("row-opts", !state.isUsed);
-  show("row-color", !state.isUsed);
+  const picked = !state.isUsed && !state.byPrice;   // 차종을 직접 고른 경우에만 차량가 · 옵션 · 색상이 있다
+  show("row-price", picked);
+  show("row-opts", picked);
+  show("row-color", picked);
+  show("row-band", state.byPrice);
+  show("row-ext", !state.byPrice);
+  if (state.byPrice) document.getElementById("sum-band").textContent = "월 " + state.priceBand;
   if (state.isUsed) {
     document.getElementById("sum-usedcond").textContent =
       (state.usedYear || "연식 무관") + " / " + (state.usedKm || "주행거리 무관");
@@ -1265,7 +1387,7 @@ function buildSummary() {
   document.getElementById("sum-custtype").textContent = state.custType || "-";
   document.getElementById("sum-product").textContent = state.product || "-";
   document.getElementById("sum-usage").textContent   = usageLabel();
-  document.getElementById("sum-car").textContent    = carLabel() || "-";
+  document.getElementById("sum-car").textContent    = state.byPrice ? kindLabel() : (carLabel() || "-");
   document.getElementById("sum-price").textContent  = totalPrice() ? won(totalPrice()) + "원" : "-";
   document.getElementById("sum-opts").textContent   = state.opts.length ? state.opts.map(o => o.n).join(", ") : "없음";
   document.getElementById("sum-color").textContent  = colorLabel();
@@ -1293,7 +1415,13 @@ function validateAll() {
 }
 
 function buildDetail(p) {
-  const carBlock = state.isUsed
+  const carBlock = state.byPrice
+    ? [
+        "── 가격으로 제안받기",
+        "희망월납입 : " + p.price_band,
+        "차량종류   : " + p.vehicle_kind
+      ]
+    : state.isUsed
     ? [
         "── 중고차 희망 조건",
         "차종       : " + p.used_model,
@@ -1313,7 +1441,8 @@ function buildDetail(p) {
       ];
 
   return [
-    state.isUsed ? "[중고 화물차 리스 견적 신청]" : "[화물차 견적 신청]",
+    state.byPrice ? "[화물차 견적 신청 · 가격으로 제안받기]"
+      : state.isUsed ? "[중고 화물차 리스 견적 신청]" : "[화물차 견적 신청]",
     "신청일시   : " + p.submit_time,
     "",
     "── 신청자",
@@ -1327,10 +1456,12 @@ function buildDetail(p) {
     "운영방법   : " + p.usage_type,
     "",
     ...carBlock,
-    "",
-    "── 외주옵션",
-    "선택항목   : " + p.external_options,
-    "직접입력   : " + p.external_custom,
+    ...(state.byPrice ? [] : [
+      "",
+      "── 외주옵션",
+      "선택항목   : " + p.external_options,
+      "직접입력   : " + p.external_custom
+    ]),
     "",
     "── 계약조건",
     "선납금     : " + p.prepay,
@@ -1363,17 +1494,20 @@ async function submitForm() {
     body_type:        state.body,
     trim:             state.trim,
     car_full:         carLabel(),
-    vehicle_condition: state.isUsed ? "중고" : "신차",
+    vehicle_condition: state.byPrice ? "가격 제안" : (state.isUsed ? "중고" : "신차"),
+    price_band:       state.byPrice ? "월 " + state.priceBand : "-",
+    vehicle_kind:     state.byPrice ? kindLabel() : "-",
     used_model:       state.usedModel  || "-",
     used_year:        state.usedYear   || "무관",
     used_km:          state.usedKm     || "무관",
     used_cond:        state.usedCond   || "무관",
     used_when:        state.usedWhen   || "-",
     used_budget:      state.usedBudget || "-",
-    factory_options:  state.isUsed ? "해당 없음 (중고)"
+    factory_options:  state.byPrice ? "해당 없음 (가격 제안)" : state.isUsed ? "해당 없음 (중고)"
                       : (state.opts.length ? state.opts.map(o => o.n + "(+" + won(o.p) + "원)").join(", ") : "없음"),
-    car_color:        state.isUsed ? "해당 없음 (중고)" : colorLabel(),
-    estimated_price:  state.isUsed ? "중고 재고 확인 후 산정" : won(totalPrice()) + "원",
+    car_color:        state.byPrice ? "해당 없음 (가격 제안)" : state.isUsed ? "해당 없음 (중고)" : colorLabel(),
+    estimated_price:  state.byPrice ? "월 납입금 " + state.priceBand + " 기준 제안"
+                      : state.isUsed ? "중고 재고 확인 후 산정" : won(totalPrice()) + "원",
     external_options: state.ext.length ? state.ext.join(", ") : "없음",
     external_custom:  state.extCustom.length ? state.extCustom.join(", ") : "없음",
     prepay:           state.prepay,
@@ -1397,7 +1531,7 @@ async function submitForm() {
   try {
     // 저장소에도 남긴다 (집계용). 실패해도 메일 발송은 그대로 진행된다.
     mtSaveLead({
-      form: state.isUsed ? 'quote-used' : 'quote',
+      form: state.byPrice ? 'quote-price' : state.isUsed ? 'quote-used' : 'quote',
       name: params.customer_name,
       phone: params.customer_phone,
       email: params.customer_email,
