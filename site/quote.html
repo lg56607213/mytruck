@@ -104,6 +104,8 @@
   /* ===== BIG SELECT CARDS (고객구분 / 상품종류 / 보험 / 정비) ===== */
   .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
   .card-grid.three { grid-template-columns: repeat(3, 1fr); }
+  .card-grid.one { grid-template-columns: 1fr; }
+  .card-grid.one .sel-card .cs { font-size: 12px; }
   @media (max-width: 520px) { .card-grid.three { grid-template-columns: 1fr; } }
   @media (max-width: 420px) { .card-grid { grid-template-columns: 1fr; } }
   .sel-card {
@@ -303,18 +305,47 @@
 
     <!-- PROGRESS -->
     <div class="progress" id="prog">
-      <div class="ps"><div class="pd act" id="pd1">1</div><div class="pl" id="pl1"></div><div class="plb act" id="plb1">내차만들기</div></div>
-      <div class="ps"><div class="pd" id="pd2">2</div><div class="pl" id="pl2"></div><div class="plb" id="plb2">외주옵션</div></div>
-      <div class="ps"><div class="pd" id="pd3">3</div><div class="pl" id="pl3"></div><div class="plb" id="plb3">고객정보</div></div>
-      <div class="ps"><div class="pd" id="pd4">4</div><div class="pl" id="pl4"></div><div class="plb" id="plb4">계약조건</div></div>
-      <div class="ps"><div class="pd" id="pd5">5</div><div class="pl" style="display:none"></div><div class="plb" id="plb5">견적받기</div></div>
+      <div class="ps"><div class="pd act" id="pd1">1</div><div class="pl" id="pl1"></div><div class="plb act" id="plb1">상품구분</div></div>
+      <div class="ps"><div class="pd" id="pd2">2</div><div class="pl" id="pl2"></div><div class="plb" id="plb2">내차만들기</div></div>
+      <div class="ps"><div class="pd" id="pd3">3</div><div class="pl" id="pl3"></div><div class="plb" id="plb3">외주옵션</div></div>
+      <div class="ps"><div class="pd" id="pd4">4</div><div class="pl" id="pl4"></div><div class="plb" id="plb4">고객정보</div></div>
+      <div class="ps"><div class="pd" id="pd5">5</div><div class="pl" id="pl5"></div><div class="plb" id="plb5">계약조건</div></div>
+      <div class="ps"><div class="pd" id="pd6">6</div><div class="pl" style="display:none"></div><div class="plb" id="plb6">견적받기</div></div>
     </div>
 
     <div id="form-wrap">
 
-      <!-- ===== STEP 1 : 내차만들기 ===== -->
+      <!-- ===== STEP 1 : 상품구분 ===== -->
       <div class="step act" id="s1">
         <p class="sec-eyebrow">Step 1</p>
+        <p class="sec-title">상품 구분을 선택해 주세요</p>
+        <p class="sec-desc">고객님 상황에 맞는 상품을 하나 골라주세요</p>
+
+        <div class="frow">
+          <div class="card-grid one" id="pclass-grp">
+            <div class="sel-card" onclick="selCard(this,'pclass-grp','productClass')">
+              <div class="ct">일반 캐피탈사 상품</div>
+              <div class="cs">신용 1~6등급 이내</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'pclass-grp','productClass')">
+              <div class="ct">저신용자 상품</div>
+              <div class="cs">면허증만 있으면 가능 &middot; 연체 / 신불자 / 개인회생 무관</div>
+            </div>
+            <div class="sel-card" onclick="selCard(this,'pclass-grp','productClass')">
+              <div class="ct">구조변경 / 용도변경 상품</div>
+              <div class="cs">구조변경 비용 리스료 포함 &middot; 반납 시 원상복구 제외</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn-next" onclick="goStep(2)">다음 &rarr; 내 차 만들기</button>
+        </div>
+      </div>
+
+      <!-- ===== STEP 2 : 내차만들기 ===== -->
+      <div class="step" id="s2">
+        <p class="sec-eyebrow">Step 2</p>
         <p class="sec-title">내 차 만들기</p>
         <p class="sec-desc">제조사부터 순서대로 선택해 주세요<br>중고차를 찾으시면 <b>중고</b>를 선택하고 원하시는 차종을 직접 적어주세요</p>
 
@@ -424,13 +455,14 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-next" onclick="goStep(2)">다음 &rarr; 외주 옵션</button>
+          <button class="btn-prev" onclick="goStep(1)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(3)">다음 &rarr; 외주 옵션</button>
         </div>
       </div>
 
-      <!-- ===== STEP 2 : 외주옵션 ===== -->
-      <div class="step" id="s2">
-        <p class="sec-eyebrow">Step 2</p>
+      <!-- ===== STEP 3 : 외주옵션 ===== -->
+      <div class="step" id="s3">
+        <p class="sec-eyebrow">Step 3</p>
         <p class="sec-title">외주 옵션을 선택해 주세요</p>
         <p class="sec-desc">출고 후 별도로 장착되는 항목입니다.<br>필요 없으시면 선택하지 않고 넘어가셔도 됩니다.</p>
 
@@ -462,14 +494,14 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-prev" onclick="goStep(1)">&larr; 이전</button>
-          <button class="btn-next" onclick="goStep(3)">다음 &rarr; 고객 정보</button>
+          <button class="btn-prev" onclick="goStep(2)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(4)">다음 &rarr; 고객 정보</button>
         </div>
       </div>
 
-      <!-- ===== STEP 3 : 고객정보 ===== -->
-      <div class="step" id="s3">
-        <p class="sec-eyebrow">Step 3</p>
+      <!-- ===== STEP 4 : 고객정보 ===== -->
+      <div class="step" id="s4">
+        <p class="sec-eyebrow">Step 4</p>
         <p class="sec-title">고객 정보를 알려주세요</p>
         <p class="sec-desc">고객 구분에 따라 적용 가능한 상품과 조건이 달라집니다</p>
 
@@ -531,14 +563,14 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-prev" onclick="goStep(2)">&larr; 이전</button>
-          <button class="btn-next" onclick="goStep(4)">다음 &rarr; 계약 조건</button>
+          <button class="btn-prev" onclick="goStep(3)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(5)">다음 &rarr; 계약 조건</button>
         </div>
       </div>
 
-      <!-- ===== STEP 4 : 계약조건 ===== -->
-      <div class="step" id="s4">
-        <p class="sec-eyebrow">Step 4</p>
+      <!-- ===== STEP 5 : 계약조건 ===== -->
+      <div class="step" id="s5">
+        <p class="sec-eyebrow">Step 5</p>
         <p class="sec-title">계약 조건을 설정해 주세요</p>
         <p class="sec-desc">원하시는 조건을 버튼으로 선택해 주세요</p>
 
@@ -632,14 +664,14 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-prev" onclick="goStep(3)">&larr; 이전</button>
-          <button class="btn-next" onclick="goStep(5)">다음 &rarr; 견적받기</button>
+          <button class="btn-prev" onclick="goStep(4)">&larr; 이전</button>
+          <button class="btn-next" onclick="goStep(6)">다음 &rarr; 견적받기</button>
         </div>
       </div>
 
-      <!-- ===== STEP 5 : 견적받기 ===== -->
-      <div class="step" id="s5">
-        <p class="sec-eyebrow">Step 5</p>
+      <!-- ===== STEP 6 : 견적받기 ===== -->
+      <div class="step" id="s6">
+        <p class="sec-eyebrow">Step 6</p>
         <p class="sec-title">견적서를 받아보세요</p>
         <p class="sec-desc">이메일 주소만 있으면 됩니다. 전화번호는 남기지 않으셔도 됩니다</p>
 
@@ -674,6 +706,7 @@
 
         <p style="font-size:12px;color:#AAA;font-weight:600;margin-bottom:12px">신청 내용 확인</p>
         <div class="summary-card">
+          <div class="sum-row"><span class="sum-key">상품 구분</span><span class="sum-val" id="sum-pclass">-</span></div>
           <div class="sum-row"><span class="sum-key">고객 구분</span><span class="sum-val" id="sum-custtype">-</span></div>
           <div class="sum-row"><span class="sum-key">상품 종류</span><span class="sum-val" id="sum-product">-</span></div>
           <div class="sum-row"><span class="sum-key">운영 방법</span><span class="sum-val" id="sum-usage">-</span></div>
@@ -690,7 +723,7 @@
         </div>
 
         <div class="btn-row">
-          <button class="btn-prev" onclick="goStep(4)">&larr; 이전</button>
+          <button class="btn-prev" onclick="goStep(5)">&larr; 이전</button>
         </div>
         <button class="btn-submit" id="submit-btn" onclick="submitForm()">견적 신청 완료 &rarr;</button>
       </div>
@@ -759,7 +792,8 @@ if (typeof emailjs !== "undefined") emailjs.init(EMAILJS_PUBLIC_KEY);
    STATE
    ================================================ */
 const state = {
-  custType: "",        // 개인 / 개인사업자 / 법인
+  productClass: "",    // 상품구분: 일반 캐피탈사 상품 / 저신용자 상품 / 구조변경 / 용도변경 상품
+  custType: "",       // 개인 / 개인사업자 / 법인
   product: "",         // 할부 / 운용리스 / 금융리스 / 렌트(구독형)
   usage: "",           // 영업용(노란색 번호판) / 자가용(흰색 번호판)
   brand: "", cat: "", model: "", body: "", trim: "",
@@ -782,7 +816,7 @@ const USED_BRAND = "중고";
 const won = n => Number(n || 0).toLocaleString("ko-KR");
 
 /* ================================================
-   STEP 1 — 차량 선택 (제조사 → 구분 → 모델 → 세부사양 → 트림)
+   STEP 2 — 차량 선택 (제조사 → 구분 → 모델 → 세부사양 → 트림)
    ================================================ */
 function makeChip(text, cls, onClick) {
   const d = document.createElement("div");
@@ -964,7 +998,7 @@ function updatePrice() {
 }
 
 /* ================================================
-   STEP 2 — 외주 옵션
+   STEP 3 — 외주 옵션
    ================================================ */
 function toggleExt(el, name) {
   el.classList.toggle("sel");
@@ -1011,7 +1045,7 @@ function allExt() {
 }
 
 /* ================================================
-   STEP 3 / 4 / 5 — 단일 선택
+   STEP 4 / 5 / 6 — 단일 선택
    ================================================ */
 function selOne(el, grpId) {
   document.querySelectorAll("#" + grpId + " .chip").forEach(c => c.classList.remove("sel"));
@@ -1103,10 +1137,13 @@ function fmtPhone(el) {
 /* ================================================
    STEP 이동 + 단계별 검증
    ================================================ */
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 function checkStep(n) {
   if (n === 1) {
+    if (!state.productClass) return "상품 구분을 선택해 주세요";
+  }
+  if (n === 2) {
     if (state.isUsed) {
       readUsedInputs();
       if (!state.usedModel) return "원하시는 중고 차종을 적어주세요";
@@ -1116,13 +1153,13 @@ function checkStep(n) {
       if (!state.trim) return "차량을 트림까지 선택해 주세요";
     }
   }
-  if (n === 3) {
+  if (n === 4) {
     if (!state.custType) return "고객 구분을 선택해 주세요";
     if (!state.product) return "상품 종류를 선택해 주세요";
     if (state.isUsed && /할부|렌트/.test(state.product)) return "중고차는 리스로만 진행됩니다. 운용리스 또는 금융리스를 선택해 주세요";
     if (!state.usage) return "운영 방법을 선택해 주세요";
   }
-  if (n === 4) {
+  if (n === 5) {
     if (state.prepayCustom && !state.prepay) return "원하시는 선납금을 입력해 주세요";
     if (state.depositCustom && !state.deposit) return "원하시는 보증금을 입력해 주세요";
     if (!state.prepay || !state.deposit) return "선납금과 보증금을 선택해 주세요";
@@ -1167,7 +1204,7 @@ function render(n) {
     const pl = document.getElementById("pl" + i);
     if (pl) pl.classList.toggle("done", i < n);
   }
-  if (n === 3) {
+  if (n === 4) {
     // 중고차는 리스로만 진행한다 — 할부 · 렌트 카드를 감춘다
     ["card-installment", "card-rent"].forEach(id => {
       const card = document.getElementById(id);
@@ -1179,7 +1216,7 @@ function render(n) {
     });
     document.getElementById("used-product-note").style.display = state.isUsed ? "block" : "none";
   }
-  if (n === 4) {
+  if (n === 5) {
     renderPeriods();
     // 중고차는 정비 서비스가 없으므로 선택 자체를 감춘다
     document.getElementById("mnt-row").style.display = state.isUsed ? "none" : "block";
@@ -1224,6 +1261,7 @@ function buildSummary() {
       (state.usedCond || "상태 무관") + " / " + (state.usedWhen || "-");
   }
 
+  document.getElementById("sum-pclass").textContent = state.productClass || "-";
   document.getElementById("sum-custtype").textContent = state.custType || "-";
   document.getElementById("sum-product").textContent = state.product || "-";
   document.getElementById("sum-usage").textContent   = usageLabel();
@@ -1283,7 +1321,8 @@ function buildDetail(p) {
     "이메일     : " + p.customer_email,
     "연락처     : " + p.customer_phone,
     "유입경로   : " + p.lead_source,
-    "고객구분   : " + p.customer_type,
+    "상품구분   : " + p.product_class,
+    "고객구분  : " + p.customer_type,
     "상품종류   : " + p.product_type,
     "운영방법   : " + p.usage_type,
     "",
@@ -1314,6 +1353,7 @@ async function submitForm() {
     customer_email:   document.getElementById("inp-email").value.trim(),
     customer_phone:   document.getElementById("inp-phone").value.trim() || "-",
     lead_source:      (typeof mtSourceLabel === "function" ? mtSourceLabel() : "-"),
+    product_class:    state.productClass,
     customer_type:    state.custType,
     product_type:     state.product,
     usage_type:       usageLabel(),
@@ -1421,12 +1461,8 @@ function showToast(msg) {
   if (!press("model-grp", q.get("model"))) return;
   if (!press("body-grp",  q.get("body")))  return;
 
-  // 트림만 고르면 되도록 그 자리로 데려간다
-  const trim = document.getElementById("trim-wrap");
-  if (trim) {
-    trim.scrollIntoView({ behavior: "smooth", block: "center" });
-    showToast("차량이 선택되었습니다. 트림을 골라주세요.");
-  }
+  // 차량은 2단계에 채워 두었다. 1단계(상품구분)를 고르고 넘어가면 트림만 고르면 된다.
+  showToast("차량이 선택되었습니다. 상품 구분을 고른 뒤 트림을 골라주세요.");
 })();
 </script>
 <!-- 네이버 프리미엄 로그분석 (공통) -->
