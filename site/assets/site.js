@@ -75,6 +75,12 @@ function mtCapture() {
     var v = q.get(k);
     if (v) { got[k] = String(v).slice(0, 60); has = true; }
   });
+  // 네이버 검색광고 클릭은 utm 없이 NaPm 만 붙어서 들어온다 (자동 추적 값)
+  if (q.get('NaPm')) {
+    got.napm = 1;
+    if (!got.src && !got.utm_source) got.src = 'naver_ad';
+    has = true;
+  }
 
   if (has) {
     got._at = mtNowKST();
@@ -83,8 +89,18 @@ function mtCapture() {
     try { localStorage.setItem(MT_STORE, JSON.stringify(got)); } catch (e) {}
     return got;
   }
+
   // 주소에 값이 없으면 이전에 저장해 둔 값 사용 (홈 → 견적 이동 대비)
-  try { return JSON.parse(localStorage.getItem(MT_STORE) || 'null'); } catch (e) { return null; }
+  var stored = null;
+  try { stored = JSON.parse(localStorage.getItem(MT_STORE) || 'null'); } catch (e) {}
+  if (stored) return stored;
+
+  // 광고 표시는 없지만 외부 사이트(검색 등)에서 처음 들어온 경우 — 처음 한 번만 기록
+  var ext = mtExternalHost(document.referrer);
+  if (!ext) return null;
+  got = { _ext: ext, _at: mtNowKST(), _page: location.pathname, _ref: document.referrer.slice(0, 160) };
+  try { localStorage.setItem(MT_STORE, JSON.stringify(got)); } catch (e) {}
+  return got;
 }
 
 /* 메일에 넣을 한 줄짜리 표기 */
@@ -94,6 +110,8 @@ function mtSourceLabel() {
 
   if (s) {
     var main = s.src || s.utm_source || s.ref || '';
+    if (main === 'naver_ad') main = '네이버 검색광고';
+    if (!main && s._ext) main = '외부 유입: ' + s._ext;
     var extra = [];
     if (s.utm_medium)   extra.push('매체 ' + s.utm_medium);
     if (s.utm_campaign) extra.push('캠페인 ' + s.utm_campaign);
@@ -104,16 +122,21 @@ function mtSourceLabel() {
              (s._at ? ' · 최초유입 ' + s._at : '');
     }
   }
-  // 광고 표시가 없으면 어디서 넘어왔는지라도 남김
-  var r = document.referrer || '';
-  if (r) {
-    try {
-      var h = new URL(r).hostname.replace(/^www\./, '');
-      if (h && h !== location.hostname.replace(/^www\./, '')) return '외부 유입: ' + h;
-    } catch (e) {}
-    return '외부 유입';
+  // 광고 표시가 없으면 어디서 넘어왔는지라도 남김.
+  // 우리 사이트 안에서 페이지를 옮긴 것은 외부 유입이 아니다.
+  var ext = mtExternalHost(document.referrer);
+  return ext ? '외부 유입: ' + ext : '직접 방문';
+}
+
+/* 이전 페이지가 다른 사이트였으면 그 도메인, 아니면 '' */
+function mtExternalHost(ref) {
+  if (!ref) return '';
+  try {
+    var h = new URL(ref).hostname.replace(/^www\./, '');
+    return h && h !== location.hostname.replace(/^www\./, '') ? h : '';
+  } catch (e) {
+    return '';
   }
-  return '직접 방문';
 }
 
 /* 견적/문의 링크에 현재 유입 파라미터를 그대로 넘겨줌 (새 탭으로 열려도 유지) */
@@ -215,20 +238,32 @@ function mtSaveLead(payload) {
    폼 전송이 "성공한 순간"에만 부른다.
    페이지 진입만으로 부르면 전환수가 부풀려져 판단이 망가진다.
 
-   type  1 = 회원가입  2 = 신청/상담  3 = 장바구니  4 = 구매  5 = 기타
-   화물차는 구매가 아니라 문의가 전환이므로 2 를 쓴다.
-   value 는 거래액이 없으므로 0.
+   네이버 공식 가이드의 현재 방식(wcs.trans, 전환 유형 코드)을 쓴다.
+   https://naver.github.io/conversion-tracking/pages/01_script_guide_wcstrans/
+     - 견적·문의 접수 = 'lead'(신청완료). 광고 리포트에 전환으로 나온다.
+     - 전화 버튼     = 'custom001'. ('call' 유형은 광고 리포트에 나오지 않는다)
+   구 방식 wcs.cnv("2") 는 '회원가입'으로 분류되던 잘못된 코드라 제거했다.
+   (trans 로 전환이 한 번 나면 같은 유형의 cnv 는 영구히 걸러지므로 둘을 섞지 않는다)
+   페이지 하단 공통 스크립트(wcs_do)가 먼저 실행된 뒤에 불려야 한다 — 폼 전송 성공 후라 항상 그렇다.
    ================================================ */
-function mtConversion(value) {
+function mtNaverConv(type) {
   try {
-    if (!window.wcs) return;                 // 스크립트 차단·오프라인 대비
+    if (!window.wcs || !wcs.trans) return;   // 스크립트 차단·오프라인 대비
     if (!window.wcs_add) window.wcs_add = {};
     wcs_add["wa"] = "s_2ae8a1ab6bae";
-    if (!window._nasa) window._nasa = {};
-
-    // 신청/상담 전환은 wcs.cnv 로 값을 만들어 wcs_do 에 넘겨야 집계된다.
-    // wcs.trans 는 장바구니·구매 전환용이라 {type, value} 를 전환으로 세지 않는다.
-    _nasa["cnv"] = wcs.cnv("2", String(value == null ? 0 : value));
-    wcs_do(_nasa);
+    var conv = {};
+    conv.type = type;
+    wcs.trans(conv);
   } catch (e) {}
 }
+
+/* 견적·문의 접수 완료. value 는 예전 호출부 호환용(거래액이 없어 쓰지 않는다) */
+function mtConversion(value) {
+  mtNaverConv('lead');
+}
+
+/* 전화 버튼(tel:) 클릭 = 전화 문의 전환. 페이지가 나중에 그린 버튼도 잡도록 문서 전체에서 받는다 */
+document.addEventListener('click', function (e) {
+  var a = e.target && e.target.closest ? e.target.closest('a[href^="tel:"]') : null;
+  if (a) mtNaverConv('custom001');
+}, true);
